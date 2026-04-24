@@ -14,7 +14,12 @@
  *     implement the push path for files that contain tables/images.
  */
 
-export function larkToObsidianMarkdown(src: string): string {
+export interface ConvertOptions {
+  /** Map from Lark image token → filename to embed via ![[...]]. */
+  imageMap?: Record<string, string>;
+}
+
+export function larkToObsidianMarkdown(src: string, opts: ConvertOptions = {}): string {
   let out = src;
 
   out = out.replace(
@@ -26,9 +31,10 @@ export function larkToObsidianMarkdown(src: string): string {
     /<image\s+([^/]*?)\/>/g,
     (_match, attrs: string) => {
       const token = /token="([^"]+)"/.exec(attrs)?.[1];
-      return token
-        ? `*[📷 image — fetch not yet implemented, Lark token \`${token}\`]*`
-        : "*[📷 image]*";
+      if (!token) return "*[📷 image]*";
+      const mapped = opts.imageMap?.[token];
+      if (mapped) return `![[${mapped}]]`;
+      return `*[📷 image — Lark token \`${token}\`]*`;
     },
   );
 
@@ -46,6 +52,14 @@ export function larkToObsidianMarkdown(src: string): string {
   out = out.replace(/<text[^>]*>([\s\S]*?)<\/text>/g, "$1");
 
   return out;
+}
+
+export function extractImageTokens(src: string): string[] {
+  const tokens = new Set<string>();
+  for (const m of src.matchAll(/<image\s+[^>]*token="([^"]+)"/g)) {
+    tokens.add(m[1]);
+  }
+  return [...tokens];
 }
 
 function convertTable(original: string, _attrs: string, inner: string): string {

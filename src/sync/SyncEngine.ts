@@ -1,8 +1,11 @@
-import { App, normalizePath, TFile } from "obsidian";
+import { App, FileSystemAdapter, normalizePath, TFile } from "obsidian";
 import type { LarkWikiSyncSettings } from "../settings";
 import type { LarkCli } from "../lark/LarkCli";
 import type { StateStore, FileSyncState } from "../state/StateStore";
 import { hashString } from "../util/hash";
+import { extractImageTokens, larkToObsidianMarkdown } from "../util/larkToObsidianMd";
+
+const ATTACHMENTS_SUBFOLDER = "_attachments";
 
 export interface SyncResult {
   pulled: number;
@@ -55,6 +58,12 @@ export class SyncEngine {
       this.settings.wikiRootNode || undefined,
     );
 
+    // Pre-scan the attachments folder once so repeat syncs don't re-download
+    // already-cached images.
+    const attachmentsRel = `${this.settings.localRoot}/${ATTACHMENTS_SUBFOLDER}`;
+    const attachmentsAbs = this.resolveAttachmentsAbsolutePath();
+    const existingAttachments = await this.scanAttachmentsCache(attachmentsRel);
+
     for (const node of nodes) {
       if (node.obj_type !== "docx") continue; // v0.1 only handles docx nodes
 
@@ -62,7 +71,14 @@ export class SyncEngine {
       const existing = this.state.get(localPath);
 
       try {
-        const remoteMd = await this.lark.fetchDoc(node.obj_token);
+        const rawMd = await this.lark.fetchDoc(node.obj_token);
+        const imageMap = await this.resolveImageMap(
+          rawMd,
+          attachmentsRel,
+          attachmentsAbs,
+          existingAttachments,
+        );
+        const remoteMd = larkToObsidianMarkdown(rawMd, { imageMap });
         const remoteHash = hashString(remoteMd);
 
         const localFile = this.app.vault.getAbstractFileByPath(localPath);
@@ -138,6 +154,76 @@ export class SyncEngine {
     }
 
     return result;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Attachments
+  // ---------------------------------------------------------------------------
+
+  private resolveAttachmentsAbsolutePath(): string {
+    const adapter = this.app.vault.adapter;
+    if (!(adapter instanceof FileSystemAdapter)) {
+      throw new Error("Lark Wiki Sync requires Obsidian desktop (FileSystemAdapter).");
+    }
+    return `${adapter.getBasePath()}/${this.settings.localRoot}/${ATTACHMENTS_SUBFOLDER}`;
+  }
+
+  /**
+   * Read the attachments folder once per sync and build a `token → filename`
+   * cache so we don't re-download files we already have. Filenames on disk
+   * are `<token>.<ext>` (the token is always the prefix before the dot).
+   */
+  private async scanAttachmentsCache(relFolder: string): Promise<Record<string, string>> {
+    const cache: Record<string, string> = {};
+    const adapter = this.app.vault.adapter;
+    if (!(await adapter.exists(relFolder))) return cache;
+    const listing = await adapter.list(relFolder);
+    for (const filePath of listing.files) {
+      const filename = filePath.split("/").pop();
+      if (!filename) continue;
+      const dot = filename.indexOf(".");
+      const token = dot > 0 ? filename.slice(0, dot) : filename;
+      cache[token] = filename;
+    }
+    return cache;
+  }
+
+  private async resolveImageMap(
+    rawMd: string,
+    relFolder: string,
+    absFolder: string,
+    cache: Record<string, string>,
+  ): Promise<Record<string, string>> {
+    const tokens = extractImageTokens(rawMd);
+    if (tokens.length === 0) return {};
+
+    const map: Record<string, string> = {};
+    const toDownload: string[] = [];
+    for (const token of tokens) {
+      if (cache[token]) {
+        map[token] = cache[token];
+      } else {
+        toDownload.push(token);
+      }
+    }
+    if (toDownload.length === 0) return map;
+
+    await this.ensureFolder(relFolder);
+
+    for (const token of toDownload) {
+      try {
+        const filename = await this.lark.downloadMedia(token, absFolder);
+        if (filename) {
+          cache[token] = filename;
+          // Obsidian wikilinks resolve by filename globally, so we don't need
+          // the _attachments/ prefix here — tokens are unique across the vault.
+          map[token] = filename;
+        }
+      } catch (err) {
+        console.warn(`LarkWikiSync: failed to download image ${token}`, err);
+      }
+    }
+    return map;
   }
 
   // ---------------------------------------------------------------------------

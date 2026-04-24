@@ -53,8 +53,8 @@
       "localPath": "📥 Wiki Nexus/FRD.md",
       "nodeToken": "FtWNwVbLAibgCAkNoKWl4RX8gof",
       "docToken": "XyH4dJZB3oEKsGxeIpfl2tadgYc",
-      "lastSyncedHash": "08c4462fe5a7066dde48264c5dcf80b86ff283c2",
-      "lastSyncedAt": "2026-04-24T11:47:36.227Z"
+      "lastSyncedHash": "69e72e787a5071e97e97c1d85ca6b12cebb99abc",
+      "lastSyncedAt": "2026-04-24T12:09:00.462Z"
     },
     "📥 Wiki Nexus/FSD.md": {
       "localPath": "📥 Wiki Nexus/FSD.md",
@@ -74,22 +74,22 @@
       "localPath": "📥 Wiki Nexus/Nexus Product Development & Deployment Flow.md",
       "nodeToken": "XR0jw2n4iiQikWkauDVlcOiBgjg",
       "docToken": "INkSdVxwloU9y4xiQnWlRqJPgBh",
-      "lastSyncedHash": "1150b242943e649d4ff3418d04a733285102f8e5",
-      "lastSyncedAt": "2026-04-24T11:47:40.689Z"
+      "lastSyncedHash": "3a0897262687494bd4f959fc9cf99e4270aae8a1",
+      "lastSyncedAt": "2026-04-24T12:10:52.952Z"
     },
     "📥 Wiki Nexus/Antiloyalty Server Cost - Based on MAU.md": {
       "localPath": "📥 Wiki Nexus/Antiloyalty Server Cost - Based on MAU.md",
       "nodeToken": "TBWfwtcDWi0DsgkZV5ZlrUgsgrf",
       "docToken": "KNb9dyFNGokcVLxuthMlIWtUgnd",
-      "lastSyncedHash": "20b4d999830b2ef133c40af73ed4f3b68cabd63b",
-      "lastSyncedAt": "2026-04-24T11:47:42.747Z"
+      "lastSyncedHash": "4414dec4a81db09640e8f13eb5445c44f140b848",
+      "lastSyncedAt": "2026-04-24T12:10:54.703Z"
     },
     "📥 Wiki Nexus/Nexus _ Weekly Progress Report.md": {
       "localPath": "📥 Wiki Nexus/Nexus _ Weekly Progress Report.md",
       "nodeToken": "MxnYw5sySiIyvekOwZeltdOGgsf",
       "docToken": "MfhmdK3e2o8fM5xJKOdlZCLLg6c",
-      "lastSyncedHash": "10dde8482bf863c81e85b107bfc83936aa2b96ac",
-      "lastSyncedAt": "2026-04-24T11:47:49.863Z"
+      "lastSyncedHash": "da62248837c3807b17f35883e1e18e5331cfc791",
+      "lastSyncedAt": "2026-04-24T12:11:01.902Z"
     },
     "📥 Wiki Nexus/Technical Document.md": {
       "localPath": "📥 Wiki Nexus/Technical Document.md",
@@ -109,15 +109,15 @@
       "localPath": "📥 Wiki Nexus/🔌 Integration Documentation/WhatsApp Business Onboarding Guide with Halosis.md",
       "nodeToken": "NbkxwVikci1OP7k9Oy0lnyvWgBg",
       "docToken": "VewjdmtKHoR1o2xOnGJlgbDcgYf",
-      "lastSyncedHash": "02ce521f14503ad3c5db27c02362413164ea4155",
-      "lastSyncedAt": "2026-04-24T11:57:51.102Z"
+      "lastSyncedHash": "5cd25dbdec0442b1cd4b5a345682ddbad5afa630",
+      "lastSyncedAt": "2026-04-24T12:07:47.809Z"
     },
     "📥 Wiki Nexus/🔌 Integration Documentation/WhatsApp Business Onboarding Guide with Qontak.md": {
       "localPath": "📥 Wiki Nexus/🔌 Integration Documentation/WhatsApp Business Onboarding Guide with Qontak.md",
       "nodeToken": "GDvewl9r5iW20zkyrDvl2g4YgPe",
       "docToken": "FchldMMvko8fnYxWqeLl0dzdgUd",
-      "lastSyncedHash": "d7cc7bf848cbbd964325140cdf0ae0b5dce3768b",
-      "lastSyncedAt": "2026-04-24T11:57:53.211Z"
+      "lastSyncedHash": "fbf87da60f907dc2d58c08244ec4844f61cbca25",
+      "lastSyncedAt": "2026-04-24T12:07:50.669Z"
     },
     "📥 Wiki Nexus/🔌 Integration Documentation/ESB x Loyalty Integration Documentation.md": {
       "localPath": "📥 Wiki Nexus/🔌 Integration Documentation/ESB x Loyalty Integration Documentation.md",
@@ -130,64 +130,64 @@
       "localPath": "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration.md",
       "nodeToken": "VtyqwTRgvimE9MkOODVlaBhwgJd",
       "docToken": "N9dqdA63go6MFoxnQshldvTggdc",
-      "lastSyncedHash": "aeab12d1ae4b074a05ad0b7bfe7656f67bd5c85b",
-      "lastSyncedAt": "2026-04-24T11:57:58.077Z"
+      "lastSyncedHash": "80d7e188d8e5a04fa5c9cdf28150e66771bccb10",
+      "lastSyncedAt": "2026-04-24T12:07:54.273Z"
     },
     "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/Email - Amazon SES.md": {
       "localPath": "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/Email - Amazon SES.md",
       "nodeToken": "FXrfwGcgqicRR8kcAppl11i8gNc",
       "docToken": "CeRbdbi3hoWuL4xTPeslc5IFg9c",
-      "lastSyncedHash": "b749e8c94c1c613407dade11b0e65bae6455b903",
-      "lastSyncedAt": "2026-04-24T11:57:59.699Z"
+      "lastSyncedHash": "9db5e61f57ec6d96caa4e94ee57209ebb9b4ea1f",
+      "lastSyncedAt": "2026-04-24T12:07:55.919Z"
     },
     "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/WhatsApp - Halosis.md": {
       "localPath": "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/WhatsApp - Halosis.md",
       "nodeToken": "GgyDwUXrKifFKCkSyU9lPu3zgHz",
       "docToken": "WGHadfOmJoASscxJuWSlz4pQgUe",
-      "lastSyncedHash": "6d9eac354a0275af3019657ea115720fa4ace844",
-      "lastSyncedAt": "2026-04-24T11:58:01.221Z"
+      "lastSyncedHash": "bd23f2e54f0a63cf53d7f754213b9ccb30b96233",
+      "lastSyncedAt": "2026-04-24T12:07:57.938Z"
     },
     "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/WhatsApp - Qontak (Mekari).md": {
       "localPath": "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/WhatsApp - Qontak (Mekari).md",
       "nodeToken": "Wx6UwH2p1icXCGkY18YlNdSEgTd",
       "docToken": "G4eudmyyloo8zmx3mKZl9Bnlglg",
-      "lastSyncedHash": "e8814a634ea97691917d5b6041ff68f723328869",
-      "lastSyncedAt": "2026-04-24T11:58:03.313Z"
+      "lastSyncedHash": "550a88c9dc238ad6c5f4644eeb4ae614c2d51a7a",
+      "lastSyncedAt": "2026-04-24T12:07:59.602Z"
     },
     "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/POS - Hospital.md": {
       "localPath": "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/POS - Hospital.md",
       "nodeToken": "XlrawL92BiJJSokHjdOlNWBrgLe",
       "docToken": "YverdBJEboDpNJxlZJmlWUTXg3f",
-      "lastSyncedHash": "b729e29d55d3074bbca33a062b9b4a7b8259c1b3",
-      "lastSyncedAt": "2026-04-24T11:58:05.265Z"
+      "lastSyncedHash": "2665a8b69be27710699957aa173760731b4bfc1d",
+      "lastSyncedAt": "2026-04-24T12:08:01.819Z"
     },
     "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/POS - Courtside.md": {
       "localPath": "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/POS - Courtside.md",
       "nodeToken": "Tzk9wo1A8iCkZIk3W9glCNGzgDe",
       "docToken": "XjJxdV01zoS0r4x0AttlFAmvgfh",
-      "lastSyncedHash": "73f4e87cfefe6d3e3038fe9113479954dad266f3",
-      "lastSyncedAt": "2026-04-24T11:58:06.503Z"
+      "lastSyncedHash": "894b82a1254c886e274b876b2b614ac0c9246da7",
+      "lastSyncedAt": "2026-04-24T12:08:03.095Z"
     },
     "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/POS - Quinos.md": {
       "localPath": "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/POS - Quinos.md",
       "nodeToken": "DIq3wwTVOiPFDbkzKGAlAkUUgah",
       "docToken": "BF4xdh0I3opiwyxiy6JlWN0KgFf",
-      "lastSyncedHash": "dc98ef599602e407f609cb9218aaf149cdc68092",
-      "lastSyncedAt": "2026-04-24T11:58:10.848Z"
+      "lastSyncedHash": "7575c34d79f027f1682780de6785a73e707a8599",
+      "lastSyncedAt": "2026-04-24T12:08:06.877Z"
     },
     "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/POS - Quinos [on going mapping with data ESB].md": {
       "localPath": "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/POS - Quinos [on going mapping with data ESB].md",
       "nodeToken": "TfrXwNGVmiD5dKkdijBlSewGg3c",
       "docToken": "EuMydlHfko3SlKxA8MblEenHgef",
-      "lastSyncedHash": "c1a4bb9558896a1e6f98fbe868f1cef91d30dcbb",
-      "lastSyncedAt": "2026-04-24T11:58:13.175Z"
+      "lastSyncedHash": "6468f1b39c35d5a7b3fe62fa22a87d5860a19797",
+      "lastSyncedAt": "2026-04-24T12:08:09.307Z"
     },
     "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/API Credentials for Finn's Beach Club.md": {
       "localPath": "📥 Wiki Nexus/🔌 Integration Documentation/Third Parties Integration/API Credentials for Finn's Beach Club.md",
       "nodeToken": "Jlk8wPfNriCmXRkthLDlglTHgSh",
       "docToken": "FcQYdRkYBoQ6NvxPKTGlCaE3god",
-      "lastSyncedHash": "8f6054fe40d31c6e3f73fa0ea701714cc35d4fdc",
-      "lastSyncedAt": "2026-04-24T11:58:15.813Z"
+      "lastSyncedHash": "35e8518442a76a5ddf620a78b11d04093a456e19",
+      "lastSyncedAt": "2026-04-24T12:08:12.358Z"
     },
     "📥 Wiki Nexus/📊 Competitor Analysis/Open Loyalty.md": {
       "localPath": "📥 Wiki Nexus/📊 Competitor Analysis/Open Loyalty.md",
@@ -214,8 +214,8 @@
       "localPath": "📥 Wiki Nexus/📊 Competitor Analysis/Yobo.md",
       "nodeToken": "UEWvw4oybiYWO0kVoCEla1OugTb",
       "docToken": "QZnudVryzoqYJIxKMHTlq81sgP0",
-      "lastSyncedHash": "9f0360a90b75ab67a05f30d8f0b77243be320664",
-      "lastSyncedAt": "2026-04-24T11:58:29.877Z"
+      "lastSyncedHash": "43d38e75127ff5b65960c0c27e549fc18644932d",
+      "lastSyncedAt": "2026-04-24T12:08:24.117Z"
     },
     "📥 Wiki Nexus/📚 [WIP] Loyalty Strategy Playbook/Nexus Documentation.md": {
       "localPath": "📥 Wiki Nexus/📚 [WIP] Loyalty Strategy Playbook/Nexus Documentation.md",
@@ -242,8 +242,8 @@
       "localPath": "📥 Wiki Nexus/📚 [WIP] Loyalty Strategy Playbook/Loyalty Strategy Components.md",
       "nodeToken": "WWfywv0pfit6JFkmBVblLSI6gOb",
       "docToken": "ZYSmdErKcovO3SxAtYsllVQOg4e",
-      "lastSyncedHash": "de8358be30e4126044d14b1bd70737d93fdbf037",
-      "lastSyncedAt": "2026-04-24T11:58:40.279Z"
+      "lastSyncedHash": "c6f835c32268ac4b1ef81302b9653ca5996391fb",
+      "lastSyncedAt": "2026-04-24T12:08:32.380Z"
     },
     "📥 Wiki Nexus/📚 [WIP] Loyalty Strategy Playbook/Loyalty Strategy Components/PRE-SALES.md": {
       "localPath": "📥 Wiki Nexus/📚 [WIP] Loyalty Strategy Playbook/Loyalty Strategy Components/PRE-SALES.md",
@@ -319,8 +319,8 @@
       "localPath": "📥 Wiki Nexus/📚 [WIP] Loyalty Strategy Playbook/Loyalty Strategy Components/DESIGN & DEVELOPMENT/Loyalty Branding.md",
       "nodeToken": "DlbzwZZXiiYLihkGG6Ull7zCgVe",
       "docToken": "RSQjdLMqnojDOjxH8y3lKypLgrh",
-      "lastSyncedHash": "50141526a95b99ce6a4a41adc0e7ebfeffe53b23",
-      "lastSyncedAt": "2026-04-24T11:58:58.064Z"
+      "lastSyncedHash": "bd748d172613446bf9d2c60f2026a249594dd996",
+      "lastSyncedAt": "2026-04-24T12:08:48.436Z"
     },
     "📥 Wiki Nexus/📚 [WIP] Loyalty Strategy Playbook/Loyalty Strategy Components/DESIGN & DEVELOPMENT/Engagement CRM - Automation.md": {
       "localPath": "📥 Wiki Nexus/📚 [WIP] Loyalty Strategy Playbook/Loyalty Strategy Components/DESIGN & DEVELOPMENT/Engagement CRM - Automation.md",
@@ -375,50 +375,50 @@
       "localPath": "📥 Wiki Nexus/FRD/Transaction - Reinstatement.md",
       "nodeToken": "J9uKwJb3ni1U2LkrTjqlk62bgMb",
       "docToken": "OP03dWRx8ooakfxbYMglnAryggI",
-      "lastSyncedHash": "021a30263910b83ecb75cdca14e85c17e80e9612",
-      "lastSyncedAt": "2026-04-24T11:59:10.518Z"
+      "lastSyncedHash": "ba18921b3ea2cd40a98b3289afdc82758c7241d1",
+      "lastSyncedAt": "2026-04-24T12:09:01.933Z"
     },
     "📥 Wiki Nexus/FRD/Nexus Personalization & Recommendation Engine —  Requirements.md": {
       "localPath": "📥 Wiki Nexus/FRD/Nexus Personalization & Recommendation Engine —  Requirements.md",
       "nodeToken": "DWCRwR5joiRPlkkpNFzlYDlCgVh",
       "docToken": "NosNdsaZAoRU0wxCQ3Jlmp4sgng",
-      "lastSyncedHash": "e8f8d57431c3e7d6e3754a15d565cec201510455",
-      "lastSyncedAt": "2026-04-24T11:59:12.130Z"
+      "lastSyncedHash": "dea7094a06972e43b1b32516a985435a26908a5a",
+      "lastSyncedAt": "2026-04-24T12:09:03.205Z"
     },
     "📥 Wiki Nexus/FRD/Content Tagging System for Personalization.md": {
       "localPath": "📥 Wiki Nexus/FRD/Content Tagging System for Personalization.md",
       "nodeToken": "XCewwWttyiYU4fkipWFltQsTgLf",
       "docToken": "EM64d8ostoBlB5xn7epl0T2mgtQ",
-      "lastSyncedHash": "a4b6d753f222a41c44d00813f05ecd5cb0253577",
-      "lastSyncedAt": "2026-04-24T11:59:13.423Z"
+      "lastSyncedHash": "a62dbd656e21802b9535c6474feb1564a11ba59e",
+      "lastSyncedAt": "2026-04-24T12:09:04.721Z"
     },
     "📥 Wiki Nexus/FRD/Paid Membership - Requirement Document.md": {
       "localPath": "📥 Wiki Nexus/FRD/Paid Membership - Requirement Document.md",
       "nodeToken": "TRRAwDRU0isFXpkd9otlm9FOgCh",
       "docToken": "DLSfd7z9aokNfLxvkZWlvFtOgSd",
-      "lastSyncedHash": "de2238575430cecf02f1b2b7eb6180b232e9e10f",
-      "lastSyncedAt": "2026-04-24T11:59:14.899Z"
+      "lastSyncedHash": "2e394faf488a72c4655443e3e0b83c69ec77838a",
+      "lastSyncedAt": "2026-04-24T12:09:06.530Z"
     },
     "📥 Wiki Nexus/FRD/Bundled Voucher (Paid Voucher Package _ Voucher Set) - Requirement Document.md": {
       "localPath": "📥 Wiki Nexus/FRD/Bundled Voucher (Paid Voucher Package _ Voucher Set) - Requirement Document.md",
       "nodeToken": "Hgaywcc2NikKRtkASlJlmlbzg3b",
       "docToken": "Y2iHd7exnoEgFGx7kbmlsx8ngU1",
-      "lastSyncedHash": "06a2ddb834f3de7064ff8966f5715ee36eee5158",
-      "lastSyncedAt": "2026-04-24T11:59:16.219Z"
+      "lastSyncedHash": "5359e76e87489b8586c462fa5328d22eaadc280e",
+      "lastSyncedAt": "2026-04-24T12:09:08.090Z"
     },
     "📥 Wiki Nexus/FRD/Cashier _ Ops Ready Loyalty Platform.md": {
       "localPath": "📥 Wiki Nexus/FRD/Cashier _ Ops Ready Loyalty Platform.md",
       "nodeToken": "ZuHXwL3FUiizUDkJ0VIl1ttngOg",
       "docToken": "PkU9dCt9CoNwWBxgWO7ltneIgsd",
-      "lastSyncedHash": "59987f04a96f76a2cfa0a428ed2a778e8626d177",
-      "lastSyncedAt": "2026-04-24T11:59:18.064Z"
+      "lastSyncedHash": "da5ee35032e91572279e7faa13676dbbea5ac570",
+      "lastSyncedAt": "2026-04-24T12:09:10.154Z"
     },
     "📥 Wiki Nexus/FRD/External Voucher Code Distribution (Import _ Sync Voucher Codes) - Requirement Document.md": {
       "localPath": "📥 Wiki Nexus/FRD/External Voucher Code Distribution (Import _ Sync Voucher Codes) - Requirement Document.md",
       "nodeToken": "EHRPwaHsBiC7ztkq9CYlRKhigBf",
       "docToken": "K1Y9docEloc1lix1LZAlG31wg4c",
-      "lastSyncedHash": "210b7a26e40314949bcbb29a4dbdd3227e10d970",
-      "lastSyncedAt": "2026-04-24T11:59:19.856Z"
+      "lastSyncedHash": "840a217f7132589c90e06449415df88d9b18f3ab",
+      "lastSyncedAt": "2026-04-24T12:09:11.639Z"
     },
     "📥 Wiki Nexus/FRD/Gamification (Core) + Gamification Templates.md": {
       "localPath": "📥 Wiki Nexus/FRD/Gamification (Core) + Gamification Templates.md",
@@ -438,8 +438,8 @@
       "localPath": "📥 Wiki Nexus/FRD/O2O Marketplace Integration (User-Initiated Claim for Tokopedia & Shopee).md",
       "nodeToken": "QM6CwuQqSisvcQkXermlDrW2gpf",
       "docToken": "EvM9dwyjfoZJf9xtU4kl9tc2g6g",
-      "lastSyncedHash": "a78a3250750206d8c7e989504f858135a9d47389",
-      "lastSyncedAt": "2026-04-24T11:59:25.060Z"
+      "lastSyncedHash": "155cc6b431292bb6e662792a584b69d3ed278bd4",
+      "lastSyncedAt": "2026-04-24T12:09:16.398Z"
     },
     "📥 Wiki Nexus/FRD/Segment Improvement — Predictive Segmentation (BigQuery + Automated ML Pipeline).md": {
       "localPath": "📥 Wiki Nexus/FRD/Segment Improvement — Predictive Segmentation (BigQuery + Automated ML Pipeline).md",
@@ -466,204 +466,204 @@
       "localPath": "📥 Wiki Nexus/FRD/Gamification — Mission Module.md",
       "nodeToken": "LiZtwodlgiyiprkZNablnEY8gmh",
       "docToken": "I3CHdwcmDoi2WIx3IfVl8JBzgVf",
-      "lastSyncedHash": "0033351f964e0467ec8cbdf0c1279eb3079ae459",
-      "lastSyncedAt": "2026-04-24T11:59:31.360Z"
+      "lastSyncedHash": "fe75e8438582d0dc54d13c22d7fc26c8fdf3b72d",
+      "lastSyncedAt": "2026-04-24T12:09:21.674Z"
     },
     "📥 Wiki Nexus/FSD/User and Authentication.md": {
       "localPath": "📥 Wiki Nexus/FSD/User and Authentication.md",
       "nodeToken": "NS11wh8K3iTm6tk4KPllv5OAgOd",
       "docToken": "VGAFddEBKovX66xPmALlL8MxgOc",
-      "lastSyncedHash": "05f85e692680e236f5895d51d6517e665da7af10",
-      "lastSyncedAt": "2026-04-24T11:59:36.440Z"
+      "lastSyncedHash": "6a300537315003ca5aa952ba1a40924d7a0f7ea9",
+      "lastSyncedAt": "2026-04-24T12:09:25.690Z"
     },
     "📥 Wiki Nexus/FSD/OTP.md": {
       "localPath": "📥 Wiki Nexus/FSD/OTP.md",
       "nodeToken": "CSQ7wRlMDiAs4zk3mSllRSPzgGg",
       "docToken": "PgkddwgdfoiuyJxSMl0lREMdg8f",
-      "lastSyncedHash": "e959de792ddaba56633f8af890cee3984a69dca6",
-      "lastSyncedAt": "2026-04-24T11:59:38.242Z"
+      "lastSyncedHash": "bb088aee91ac980ed21558edddea9eaea53b9213",
+      "lastSyncedAt": "2026-04-24T12:09:27.383Z"
     },
     "📥 Wiki Nexus/FSD/Members.md": {
       "localPath": "📥 Wiki Nexus/FSD/Members.md",
       "nodeToken": "GkOewSicBiTmITkmUvOlNGNFgHh",
       "docToken": "VOPddDxIuoLtT9xu3zClF6aygkc",
-      "lastSyncedHash": "c30f636c1543acae366b61c6021d3998e4fb5ada",
-      "lastSyncedAt": "2026-04-24T11:59:40.789Z"
+      "lastSyncedHash": "e4f19ccd46f774933dd81e08ac33f37f8687e3f8",
+      "lastSyncedAt": "2026-04-24T12:09:29.642Z"
     },
     "📥 Wiki Nexus/FSD/Members - Group.md": {
       "localPath": "📥 Wiki Nexus/FSD/Members - Group.md",
       "nodeToken": "IwphwoorOiwfeNk1EKglPqcvgHd",
       "docToken": "J1PzdtONhoGQ05xCecalD73WgSZ",
-      "lastSyncedHash": "06cffc0a834cd48bcc60012e7b1720850cf71d44",
-      "lastSyncedAt": "2026-04-24T11:59:44.793Z"
+      "lastSyncedHash": "b0a1477436433405d300373d46c595fc059a9ccb",
+      "lastSyncedAt": "2026-04-24T12:09:32.146Z"
     },
     "📥 Wiki Nexus/FSD/Segmentation.md": {
       "localPath": "📥 Wiki Nexus/FSD/Segmentation.md",
       "nodeToken": "V2mGwds7dizsuGkCaDNlviT9gnd",
       "docToken": "BXUhdndrxoOfj1xiyyMlr9degrh",
-      "lastSyncedHash": "493e84010c76ab1d27994a74b67fa10c7c23d836",
-      "lastSyncedAt": "2026-04-24T11:59:46.635Z"
+      "lastSyncedHash": "068311e9f5573d053c3b884d14eda0ab00dbe397",
+      "lastSyncedAt": "2026-04-24T12:09:34.565Z"
     },
     "📥 Wiki Nexus/FSD/Banner.md": {
       "localPath": "📥 Wiki Nexus/FSD/Banner.md",
       "nodeToken": "JexXwq61ziwoDZkdHX2lpExlgCd",
       "docToken": "SsuQdY1IyotZXyxwnGflaaJhgfd",
-      "lastSyncedHash": "518e2483e7f045d105d8625eb8aa93b9addb465b",
-      "lastSyncedAt": "2026-04-24T11:59:48.438Z"
+      "lastSyncedHash": "dce3cc765b981944e1ecebc0fabcc90d1b273aba",
+      "lastSyncedAt": "2026-04-24T12:09:36.710Z"
     },
     "📥 Wiki Nexus/FSD/News and Events.md": {
       "localPath": "📥 Wiki Nexus/FSD/News and Events.md",
       "nodeToken": "T4IKwzPotiOsc9kHis8llAKcgTc",
       "docToken": "TusmdXBBTol3S8xAVSflvxx6gQc",
-      "lastSyncedHash": "ba6e5f6be26cc7ac1f1597bbeade4715d70b2412",
-      "lastSyncedAt": "2026-04-24T11:59:50.231Z"
+      "lastSyncedHash": "a32aa73cf94d2a8358213dde25e731cd98329f7c",
+      "lastSyncedAt": "2026-04-24T12:09:38.825Z"
     },
     "📥 Wiki Nexus/FSD/Promotion.md": {
       "localPath": "📥 Wiki Nexus/FSD/Promotion.md",
       "nodeToken": "Iv0EwmJVtiLBOvkgn0FllhCygUg",
       "docToken": "EDcDdK2qroHaQDx2O3Rl6KyEgiw",
-      "lastSyncedHash": "fe4fc7ff91e292f1a509daeb47486a1d64273f5b",
-      "lastSyncedAt": "2026-04-24T11:59:52.168Z"
+      "lastSyncedHash": "68cba29f82432dcf893f9d17e72eb2940afd8ede",
+      "lastSyncedAt": "2026-04-24T12:09:41.383Z"
     },
     "📥 Wiki Nexus/FSD/Brand.md": {
       "localPath": "📥 Wiki Nexus/FSD/Brand.md",
       "nodeToken": "GPmcwAR7hioNbbkz17Qlx1CGgnc",
       "docToken": "NnS6dzU8xoa5NBx2gJpl9haNgEe",
-      "lastSyncedHash": "ff9ea4b034707ec024d0221f75d0c01cce6c5ebf",
-      "lastSyncedAt": "2026-04-24T11:59:54.398Z"
+      "lastSyncedHash": "20e0e030f98de09972c8dbd85e960b2de2b78443",
+      "lastSyncedAt": "2026-04-24T12:09:43.199Z"
     },
     "📥 Wiki Nexus/FSD/Outlet.md": {
       "localPath": "📥 Wiki Nexus/FSD/Outlet.md",
       "nodeToken": "RS1HwStJ5i9T5ZkdKlul0O5dgSn",
       "docToken": "GPNZdJLfHoeZxtxjRWflmjZIgX6",
-      "lastSyncedHash": "a6dac133bc7b96a3c7e54d7be5315c12c7fee57c",
-      "lastSyncedAt": "2026-04-24T11:59:56.780Z"
+      "lastSyncedHash": "812af08d52aa376e8696d18f89e789aec5080397",
+      "lastSyncedAt": "2026-04-24T12:09:45.776Z"
     },
     "📥 Wiki Nexus/FSD/Transaction - Purchase.md": {
       "localPath": "📥 Wiki Nexus/FSD/Transaction - Purchase.md",
       "nodeToken": "S7Z1waHwSifwNykl7lklN44RgHG",
       "docToken": "FxdAdaGTSo8J6uxb7HOlbhuzgmb",
-      "lastSyncedHash": "18232d88023891a337842cbee042f39cba724d7d",
-      "lastSyncedAt": "2026-04-24T11:59:58.638Z"
+      "lastSyncedHash": "2894fad6b5123fc121eae0a6d0b12320d8964058",
+      "lastSyncedAt": "2026-04-24T12:09:47.998Z"
     },
     "📥 Wiki Nexus/FSD/Transaction - Fraud Management.md": {
       "localPath": "📥 Wiki Nexus/FSD/Transaction - Fraud Management.md",
       "nodeToken": "XjmLwmw1wihtKvkaAeslExISgEc",
       "docToken": "AIBCdDawDoR9D1xpEvYlo0NpgEH",
-      "lastSyncedHash": "f284eec13284476ada8a7fe899505941b86e75dc",
-      "lastSyncedAt": "2026-04-24T12:00:01.623Z"
+      "lastSyncedHash": "a05352fb7139126f64564fdb00d8f4dc7f90d69e",
+      "lastSyncedAt": "2026-04-24T12:09:49.973Z"
     },
     "📥 Wiki Nexus/FSD/Transaction - Ratings.md": {
       "localPath": "📥 Wiki Nexus/FSD/Transaction - Ratings.md",
       "nodeToken": "KPfowVeG9iWbMakzcqzlTaqqg9g",
       "docToken": "HlAMdRayjoYkhWxzV6YlKhlEg8e",
-      "lastSyncedHash": "c48bfcf6ead52dbca3da77844677c2fa6035ef29",
-      "lastSyncedAt": "2026-04-24T12:00:03.124Z"
+      "lastSyncedHash": "4417888ea045d7c1522c3db94a6d5365dc8b9ca8",
+      "lastSyncedAt": "2026-04-24T12:09:51.207Z"
     },
     "📥 Wiki Nexus/FSD/Transaction - Reinstatement.md": {
       "localPath": "📥 Wiki Nexus/FSD/Transaction - Reinstatement.md",
       "nodeToken": "J5xzwgXF9iIYUEkzK7Rlf98ugIw",
       "docToken": "MP5hd6BPNoGQeXxQC4IlCEpqgKc",
-      "lastSyncedHash": "b472c17349c1dc662e5d524c0968669e9aef043f",
-      "lastSyncedAt": "2026-04-24T12:00:05.113Z"
+      "lastSyncedHash": "403219ac3daed7b87ac58ecaf2139aa433077235",
+      "lastSyncedAt": "2026-04-24T12:09:54.048Z"
     },
     "📥 Wiki Nexus/FSD/Tier.md": {
       "localPath": "📥 Wiki Nexus/FSD/Tier.md",
       "nodeToken": "TInfwygGrig11ykb7EOlCbVygBb",
       "docToken": "KskLdejiqo4wuLxwkholtaz7gXd",
-      "lastSyncedHash": "2ea3fe09fcbf7614a73ce694cdc0b1d6294d3ec5",
-      "lastSyncedAt": "2026-04-24T12:00:07.843Z"
+      "lastSyncedHash": "351747b73defee53aa3cbf7d8520ff35bd40f727",
+      "lastSyncedAt": "2026-04-24T12:09:55.932Z"
     },
     "📥 Wiki Nexus/FSD/Tier - Paid Membership.md": {
       "localPath": "📥 Wiki Nexus/FSD/Tier - Paid Membership.md",
       "nodeToken": "RmdpwjIkWixKEdkquvqlO3fCg96",
       "docToken": "BDAvdgLIpom6lKxZXk8l5sZigOg",
-      "lastSyncedHash": "e6784a5fe4d17a8e604df556195967e19153c26b",
-      "lastSyncedAt": "2026-04-24T12:00:09.836Z"
+      "lastSyncedHash": "0df653c9f1d12358c5b9392c508c2c3336e5ef87",
+      "lastSyncedAt": "2026-04-24T12:09:57.891Z"
     },
     "📥 Wiki Nexus/FSD/Wallet.md": {
       "localPath": "📥 Wiki Nexus/FSD/Wallet.md",
       "nodeToken": "BvaDw3JGUicCkzkcghMlCnicgph",
       "docToken": "OZM6dJC1IoEgo6xO5zHl2YM9g1w",
-      "lastSyncedHash": "d9e6ddf9c659e78bb8a14f84d0670801d61e6956",
-      "lastSyncedAt": "2026-04-24T12:00:12.233Z"
+      "lastSyncedHash": "c0d4be1482a90c8813c04ba9ed3ca5cc3d3add53",
+      "lastSyncedAt": "2026-04-24T12:10:00.471Z"
     },
     "📥 Wiki Nexus/FSD/Adjustment.md": {
       "localPath": "📥 Wiki Nexus/FSD/Adjustment.md",
       "nodeToken": "Uj1jw95r2iK7FSkFKvhlxodJgme",
       "docToken": "XuxydkMVPoSRTbxGJtnl2odegVc",
-      "lastSyncedHash": "396acddcdfc0608f6407851686cb791ade0a9f6f",
-      "lastSyncedAt": "2026-04-24T12:00:13.561Z"
+      "lastSyncedHash": "b8f33565cddead2155876e90b5ad9d704bba286c",
+      "lastSyncedAt": "2026-04-24T12:10:02.404Z"
     },
     "📥 Wiki Nexus/FSD/Voucher.md": {
       "localPath": "📥 Wiki Nexus/FSD/Voucher.md",
       "nodeToken": "Jr7yw6Eali4KNokWGAWlGsqJg3e",
       "docToken": "ZXe5dv6dQojFCWxw56OlgWcqgZg",
-      "lastSyncedHash": "74932ae6af284e28011277b7a61c468d02d42326",
-      "lastSyncedAt": "2026-04-24T12:00:15.299Z"
+      "lastSyncedHash": "53ad2fcc36b0792d10a56af599e675368e6e4836",
+      "lastSyncedAt": "2026-04-24T12:10:04.682Z"
     },
     "📥 Wiki Nexus/FSD/Voucher - External Codes.md": {
       "localPath": "📥 Wiki Nexus/FSD/Voucher - External Codes.md",
       "nodeToken": "SBXCwsqtVi7qHckSmTjls8xUgBb",
       "docToken": "DCjQdRzhvosk0cxrLgGlvc01gCe",
-      "lastSyncedHash": "ec3758baf11ccd5b36da7859b1b45885ad66e2f4",
-      "lastSyncedAt": "2026-04-24T12:00:18.519Z"
+      "lastSyncedHash": "d7a3d4a984a925c959a5120b890684f669ec1371",
+      "lastSyncedAt": "2026-04-24T12:10:08.217Z"
     },
     "📥 Wiki Nexus/FSD/Voucher - Bundled Voucher.md": {
       "localPath": "📥 Wiki Nexus/FSD/Voucher - Bundled Voucher.md",
       "nodeToken": "LTrLwDtA2i8nfRkyrCVlSYMtgBe",
       "docToken": "UILEdWWexoQ7pTxZqBRlgc05gxG",
-      "lastSyncedHash": "7cc65bda3b6c366d6d1b4cafcb83c4fe606f46e4",
-      "lastSyncedAt": "2026-04-24T12:00:21.970Z"
+      "lastSyncedHash": "5bf41c7404b4e9f1e3454909189d337dc441d8b2",
+      "lastSyncedAt": "2026-04-24T12:10:11.310Z"
     },
     "📥 Wiki Nexus/FSD/Reward Catalog.md": {
       "localPath": "📥 Wiki Nexus/FSD/Reward Catalog.md",
       "nodeToken": "XPoIwTN2Oi60sSk7TU9l3q6Rgxg",
       "docToken": "W8QJdEYNLoGBWUxDzURlaFjygqZ",
-      "lastSyncedHash": "b72cfc006e35884352b7a7139e6cd12a57f4a3f8",
-      "lastSyncedAt": "2026-04-24T12:00:23.868Z"
+      "lastSyncedHash": "8e1a1463358dacc83c08df020f460702d0460748",
+      "lastSyncedAt": "2026-04-24T12:10:13.737Z"
     },
     "📥 Wiki Nexus/FSD/Blast.md": {
       "localPath": "📥 Wiki Nexus/FSD/Blast.md",
       "nodeToken": "FBJLwWHEjibWEvkSTIZlw2fzgug",
       "docToken": "QEjodF50Kov4w2xs69SlcmGVgOb",
-      "lastSyncedHash": "8a94c21c120b60d31b1c8555e7e9e63d51a079d2",
-      "lastSyncedAt": "2026-04-24T12:00:26.541Z"
+      "lastSyncedHash": "ba34824ea0fd6ede0bdb6a2b40188e4c32035f99",
+      "lastSyncedAt": "2026-04-24T12:10:16.111Z"
     },
     "📥 Wiki Nexus/FSD/WhatsApp Template.md": {
       "localPath": "📥 Wiki Nexus/FSD/WhatsApp Template.md",
       "nodeToken": "H8LFwyvw9ijyAIkktn7lHM0Vgog",
       "docToken": "YRXjdpe5zoweL9xPZFQlGNJIgee",
-      "lastSyncedHash": "c8f0ba02506335f86c3ea27bd3d7ccf5505dea2b",
-      "lastSyncedAt": "2026-04-24T12:00:28.066Z"
+      "lastSyncedHash": "6151602412ca932ce7b4afda4d0146c557db79a2",
+      "lastSyncedAt": "2026-04-24T12:10:17.911Z"
     },
     "📥 Wiki Nexus/FSD/Campaign.md": {
       "localPath": "📥 Wiki Nexus/FSD/Campaign.md",
       "nodeToken": "ULgZwZjG0iaYB0kjGzZlSEmugy0",
       "docToken": "NjhWd5evwoWlUfxt6s3lqYF8gHe",
-      "lastSyncedHash": "93a79e858d7c8ffdf18ba5525741d398584cad57",
-      "lastSyncedAt": "2026-04-24T12:00:31.199Z"
+      "lastSyncedHash": "898c029f0976ab25aaa89780c19c2e3606a72948",
+      "lastSyncedAt": "2026-04-24T12:10:22.036Z"
     },
     "📥 Wiki Nexus/FSD/Reports Hub.md": {
       "localPath": "📥 Wiki Nexus/FSD/Reports Hub.md",
       "nodeToken": "Kev9wLC3oifSJDkxoaPlmcBogWd",
       "docToken": "RnLad06MkorQ5AxPEuilH7oTgLf",
-      "lastSyncedHash": "b28e11654e9533244dee9bf5f14380d55ccbde1f",
-      "lastSyncedAt": "2026-04-24T12:00:33.126Z"
+      "lastSyncedHash": "5c89ef178723099258d4c996300decc9ec5c5c33",
+      "lastSyncedAt": "2026-04-24T12:10:23.787Z"
     },
     "📥 Wiki Nexus/FSD/Settings.md": {
       "localPath": "📥 Wiki Nexus/FSD/Settings.md",
       "nodeToken": "FflkwkRyFiG7eFksK28lCouZgrd",
       "docToken": "CGlPdhvIVoT0Rkxu7aYlgI3ug2c",
-      "lastSyncedHash": "393fa8192e8aa3bfa5d30d246290d2d810a22f22",
-      "lastSyncedAt": "2026-04-24T12:00:35.736Z"
+      "lastSyncedHash": "6dc0774f9c8296b60bdbdc13a9f7136390ee1e49",
+      "lastSyncedAt": "2026-04-24T12:10:25.836Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/2024-05-29 Backlog Refinement Meeting notes.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/2024-05-29 Backlog Refinement Meeting notes.md",
       "nodeToken": "ZYXNwaIw3iT1eFkVBVxlbnB0gug",
       "docToken": "RmJidsfTYoDZvQxa78hlaLqQgdS",
-      "lastSyncedHash": "93e3574dad1ac1163728c9ae9b90d6f56c76eb6d",
-      "lastSyncedAt": "2026-04-24T12:00:38.576Z"
+      "lastSyncedHash": "97d38496fc3a6caaa90f7b7ce0df590619d37ed8",
+      "lastSyncedAt": "2026-04-24T12:10:28.266Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives.md",
@@ -676,169 +676,169 @@
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ MVP V.1.0.0 - Bug Fixes.md",
       "nodeToken": "YEcpwIY3Biydakk5PaNl0dD6g0d",
       "docToken": "LeBodqlnJouik6xkGExlgJqqgEh",
-      "lastSyncedHash": "9b2d5d1df17039bbbfd055b82b37b8d6db84585b",
-      "lastSyncedAt": "2026-04-24T12:00:41.564Z"
+      "lastSyncedHash": "0d3d21a256f31b588f960f539d03c8b34a6d4d51",
+      "lastSyncedAt": "2026-04-24T12:10:30.721Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Review & Retrospective_ Sprint 1 - Initial Beta Sprint.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Review & Retrospective_ Sprint 1 - Initial Beta Sprint.md",
       "nodeToken": "CsmPwzVEgiCuEWklzXKlwd8Pg0b",
       "docToken": "SFd9dSjOfoVa9hxd67tl95Higad",
-      "lastSyncedHash": "7c9e55d9107afbbf43898c06bc507405338d1fdf",
-      "lastSyncedAt": "2026-04-24T12:00:42.891Z"
+      "lastSyncedHash": "ff385daa4a9e5aa09130b9dfd6dfc89297297ad6",
+      "lastSyncedAt": "2026-04-24T12:10:32.717Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Review & Retrospective_ Sprint 2 - Beta V.0.2.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Review & Retrospective_ Sprint 2 - Beta V.0.2.md",
       "nodeToken": "LE5Mw9EPViYr69knaAtlnSZRgRe",
       "docToken": "RFCNdn6HaoZmdqxdenolvgysgBf",
-      "lastSyncedHash": "49f7795159e6dab7172d9b201802de3d0f126155",
-      "lastSyncedAt": "2026-04-24T12:00:44.572Z"
+      "lastSyncedHash": "cad4a9b2784cf9cc95abb9a9d0ab5574d51ea0e9",
+      "lastSyncedAt": "2026-04-24T12:10:33.962Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ MVP V.1.0.0 - Sprint 3.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ MVP V.1.0.0 - Sprint 3.md",
       "nodeToken": "Ohx5wwTIeinvPbkFUsDlSoHrg7e",
       "docToken": "WGDJduE2Mobmt7x330Ol4PPZgSf",
-      "lastSyncedHash": "6b210ddace005fb4a7fcac6d60cad6c09373848c",
-      "lastSyncedAt": "2026-04-24T12:00:46.329Z"
+      "lastSyncedHash": "379fceff760aac68b9df5569494edce74ac8811d",
+      "lastSyncedAt": "2026-04-24T12:10:35.722Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ MVP V.1.0.1 - Bug Fixes.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ MVP V.1.0.1 - Bug Fixes.md",
       "nodeToken": "HXVfwcboDi5IRwkWZ28lI4Keg4j",
       "docToken": "UDHXdI4ndoKHHjxyg4Hl2tVpggc",
-      "lastSyncedHash": "59f5db0f9ac14d14b7bf8e1da2ef8407c6bac949",
-      "lastSyncedAt": "2026-04-24T12:00:47.615Z"
+      "lastSyncedHash": "e5fd5a05dd260a81e2ea929a8477907653f29e5f",
+      "lastSyncedAt": "2026-04-24T12:10:36.884Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ MVP V.1.0.2.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ MVP V.1.0.2.md",
       "nodeToken": "F1pNwWqQci3rXGkQzXulRW20gBg",
       "docToken": "LMvcd2fiQo7InEx0Gpwl8Gemgpe",
-      "lastSyncedHash": "2e69bb6f1be0b7d85ec4b35a550f0507ca84a0c2",
-      "lastSyncedAt": "2026-04-24T12:00:48.886Z"
+      "lastSyncedHash": "c8e89f613980602163b3482691f29c055f488bb0",
+      "lastSyncedAt": "2026-04-24T12:10:39.131Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Designer Task.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Designer Task.md",
       "nodeToken": "S5GiwfAAYiFWq7kDKRslSvDTgcg",
       "docToken": "LvQcdTClUoFzKQxsxrqlpvb6gQf",
-      "lastSyncedHash": "85b15c4998fcb6a4e680b568e50c0a8dced60eeb",
-      "lastSyncedAt": "2026-04-24T12:00:50.129Z"
+      "lastSyncedHash": "3672e665941935fa3cd282976fe3a5d43f561d6e",
+      "lastSyncedAt": "2026-04-24T12:10:40.434Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Sprint - Izzy Prep & Release.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Sprint - Izzy Prep & Release.md",
       "nodeToken": "DE4WwqgLWi5593kK5FmlY56Ggic",
       "docToken": "JeWidwG5roK2NgxKx3WlFJDcgKd",
-      "lastSyncedHash": "47867b5394b0b7c182f8ede7dbf182b59151bff3",
-      "lastSyncedAt": "2026-04-24T12:00:51.421Z"
+      "lastSyncedHash": "f0eab7625122cbd230a0e9106c599593ee48ffdf",
+      "lastSyncedAt": "2026-04-24T12:10:41.715Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Sprint - Arka Post Grand Launch.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Sprint - Arka Post Grand Launch.md",
       "nodeToken": "VbMNwjQ8vikLlxknMVHl5yKBgmc",
       "docToken": "D30edMfFtounYXx9EFZlOPbsgDf",
-      "lastSyncedHash": "10370c1d90bd7d5afd8ef28f83df849671c5d17f",
-      "lastSyncedAt": "2026-04-24T12:00:52.782Z"
+      "lastSyncedHash": "7de2ec445c146f1f96de8cac479d58c1c4c86bc6",
+      "lastSyncedAt": "2026-04-24T12:10:42.910Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Automation & Segmentation.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Automation & Segmentation.md",
       "nodeToken": "J0JpweXQ0in8r0kUH9IlCzzHg0c",
       "docToken": "LrPAdpBtxoBpD0xdJCRl6kCCgbh",
-      "lastSyncedHash": "90e6fffe2c547169892ac52ced1e69304f777b03",
-      "lastSyncedAt": "2026-04-24T12:00:54.522Z"
+      "lastSyncedHash": "d30ab2b302fa3aa828502789a1a47b0a7700f066",
+      "lastSyncedAt": "2026-04-24T12:10:44.150Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Sprint - Izzy Prep & Release 14-10-2024.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Sprint - Izzy Prep & Release 14-10-2024.md",
       "nodeToken": "HxjKwC6Ffi3CLKkWuhGlJUBtgbb",
       "docToken": "Brzid4D8QozKu6xmN7xlSMgygCh",
-      "lastSyncedHash": "a7c57f83192884002a7544985c2bea6a7154102c",
-      "lastSyncedAt": "2026-04-24T12:00:55.741Z"
+      "lastSyncedHash": "0ad5a1f37b10cd7ac2d626fe677a3ab28dac1e5a",
+      "lastSyncedAt": "2026-04-24T12:10:46.263Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Sprint 20 June 2025.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Sprint 20 June 2025.md",
       "nodeToken": "ABODwyXFkiJrJlkK94Ole7i2gsb",
       "docToken": "CvtTdWBN4osmRvxWjwWl7jFxgaf",
-      "lastSyncedHash": "4a8137dda2e3242eea9cb74b2adce79f0e8a4758",
-      "lastSyncedAt": "2026-04-24T12:00:56.920Z"
+      "lastSyncedHash": "d27e6f70dbae942cf26d6f0d292cce352cd92662",
+      "lastSyncedAt": "2026-04-24T12:10:47.500Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Sprint 4 July 2025.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Sprint 4 July 2025.md",
       "nodeToken": "UT9cw2R8Lim1mrkv8Xsl2OL9gTb",
       "docToken": "MwC2dhs2jodkboxt1f0lENljg2g",
-      "lastSyncedHash": "c907e091deb5735b9a358570646e407b6aed312f",
-      "lastSyncedAt": "2026-04-24T12:00:58.617Z"
+      "lastSyncedHash": "10e1d1e4d2ee7a4161f10283d19ba4faaf13166d",
+      "lastSyncedAt": "2026-04-24T12:10:48.720Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Padelapan Loyalty.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Retrospectives/Retrospective_ Padelapan Loyalty.md",
       "nodeToken": "XdUWwplX7i3tdbk7Vx7l2Ctpgjd",
       "docToken": "KoyHd63nWoM3PvxF6Zwleuipgzf",
-      "lastSyncedHash": "d40c3fe30b34ba365078c531d5f3bd1e8c5ee07c",
-      "lastSyncedAt": "2026-04-24T12:01:00.484Z"
+      "lastSyncedHash": "b7e24c9e0145d7dd97e87b93ec9d68abd605c3ea",
+      "lastSyncedAt": "2026-04-24T12:10:50.019Z"
     },
     "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Nexus Business Meeting Notes.md": {
       "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM)/Nexus Business Meeting Notes.md",
       "nodeToken": "EmlFwrhG1iB2O9kXsVjlUUKNgtg",
       "docToken": "Jx18dSG7VormfNxE4CKl5OXhgof",
-      "lastSyncedHash": "f19419affe40ed4f76f3d31528ec8afda0248d1c",
-      "lastSyncedAt": "2026-04-24T12:01:02.925Z"
+      "lastSyncedHash": "88deb53d88cc1774127686a98bca105787d61225",
+      "lastSyncedAt": "2026-04-24T12:10:51.499Z"
     },
     "📥 Wiki Nexus/Nexus _ Weekly Progress Report/Nexus _ Daily Minutes.md": {
       "localPath": "📥 Wiki Nexus/Nexus _ Weekly Progress Report/Nexus _ Daily Minutes.md",
       "nodeToken": "KcqSwQ51li57wVkzlR6l5QeQghe",
       "docToken": "ZPA3duBsPoVVERxofCWl2151gmc",
-      "lastSyncedHash": "b75e95010f3cd9cc59e54fae3ca260dabbf1c706",
-      "lastSyncedAt": "2026-04-24T12:01:16.055Z"
+      "lastSyncedHash": "6dce669bdb0c96b0876570112c63fb529d198e63",
+      "lastSyncedAt": "2026-04-24T12:11:05.503Z"
     },
     "📥 Wiki Nexus/Technical Document/Versioning Rules.md": {
       "localPath": "📥 Wiki Nexus/Technical Document/Versioning Rules.md",
       "nodeToken": "ZOGzwpBvIih5dlkwfv0lzaqDgAu",
       "docToken": "HzK3dNx1JoUaJexc4valwibogue",
-      "lastSyncedHash": "aa17b82840ef94f12768bba5d82a1fdbb6937f0d",
-      "lastSyncedAt": "2026-04-24T12:01:20.320Z"
+      "lastSyncedHash": "c5b1ddda8e6a81c4aca46c0d968f9577dc28f27b",
+      "lastSyncedAt": "2026-04-24T12:11:08.471Z"
     },
     "📥 Wiki Nexus/Technical Document/Nexus - Backend Standard Operational Procedure (SOP).md": {
       "localPath": "📥 Wiki Nexus/Technical Document/Nexus - Backend Standard Operational Procedure (SOP).md",
       "nodeToken": "YQX3wlx0tiWGEzkGfLTlhScMgGb",
       "docToken": "XUEPdjlKuoIz6nxBL9ilxz8BgNf",
-      "lastSyncedHash": "5268682cac9c293aef8101256fd0a724c6ed39c5",
-      "lastSyncedAt": "2026-04-24T12:01:21.970Z"
+      "lastSyncedHash": "bfb66cfc148fdd33f75eefef1205799965d1e94f",
+      "lastSyncedAt": "2026-04-24T12:11:09.999Z"
     },
     "📥 Wiki Nexus/Technical Document/Nexus - Development CMS Setup.md": {
       "localPath": "📥 Wiki Nexus/Technical Document/Nexus - Development CMS Setup.md",
       "nodeToken": "PJBLwmLZCiLLbYk4f6mlsDvzg1g",
       "docToken": "RXREdQfnmokN0uxBgw3l3WuBgNf",
-      "lastSyncedHash": "d26290338a835274c6b0fb36c5aef72c10a2c45a",
-      "lastSyncedAt": "2026-04-24T12:01:23.616Z"
+      "lastSyncedHash": "097ebcf644beb70627d75ae9ffaefe545aa82539",
+      "lastSyncedAt": "2026-04-24T12:11:11.597Z"
     },
     "📥 Wiki Nexus/Technical Document/Nexus Issues - Need To Be Enhanced .md": {
       "localPath": "📥 Wiki Nexus/Technical Document/Nexus Issues - Need To Be Enhanced .md",
       "nodeToken": "WyRAwtlMdiBJEfkjPNTlSQu2gXy",
       "docToken": "GHeQdEquqoqadJxhnNAl7WjIgJd",
-      "lastSyncedHash": "cb0eb495e6a394f6f8fd8d365158fb47c7b090ff",
-      "lastSyncedAt": "2026-04-24T12:01:25.768Z"
+      "lastSyncedHash": "9ab9a754e9330e445238343046d531a90ae48920",
+      "lastSyncedAt": "2026-04-24T12:11:12.908Z"
     },
     "📥 Wiki Nexus/Technical Document/Architecture_ Mobile App _-_ Gamification Website Integration.md": {
       "localPath": "📥 Wiki Nexus/Technical Document/Architecture_ Mobile App _-_ Gamification Website Integration.md",
       "nodeToken": "DujnwbglwiTBqkkrrYmlQMpngth",
       "docToken": "QULTdDwnpomZ32xMrZRlnI1MgXb",
-      "lastSyncedHash": "ccbb7288c29f8159c98cf603ca4939a327b754e1",
-      "lastSyncedAt": "2026-04-24T12:01:27.016Z"
+      "lastSyncedHash": "b7f33517becd74b53a33731194e9434b6fa34966",
+      "lastSyncedAt": "2026-04-24T12:11:14.850Z"
     },
     "📥 Wiki Nexus/Technical Document/Agentic Engineering Guide.md": {
       "localPath": "📥 Wiki Nexus/Technical Document/Agentic Engineering Guide.md",
       "nodeToken": "HoPdw2jILi684ekcYy5lRSTfgeh",
       "docToken": "Jol1dHNSHowIBJxpPvcl9njpgue",
-      "lastSyncedHash": "0953cf0337d5afc6c2923b48e91cec3773268900",
-      "lastSyncedAt": "2026-04-24T12:01:28.692Z"
+      "lastSyncedHash": "936f33d21e250377c427c93b45cb055661799d4f",
+      "lastSyncedAt": "2026-04-24T12:11:16.208Z"
     },
     "📥 Wiki Nexus/Technical Document/Nexus — Agentic Workflow.md": {
       "localPath": "📥 Wiki Nexus/Technical Document/Nexus — Agentic Workflow.md",
       "nodeToken": "MJINwx3EsiXxFZkkVBBlpAnygzg",
       "docToken": "FZqbd75BroKJZnx2sENlkUq8grf",
-      "lastSyncedHash": "6fc8a134a0c2f0b60d1697e59626c4d21b30ef5e",
-      "lastSyncedAt": "2026-04-24T12:01:30.367Z"
+      "lastSyncedHash": "28b31e429609368a31dc3e081689b0087dfeb15c",
+      "lastSyncedAt": "2026-04-24T12:11:18.043Z"
     },
     "📥 Wiki Nexus/Technical Document/Study Case_ MCD Campaign DT Speed.md": {
       "localPath": "📥 Wiki Nexus/Technical Document/Study Case_ MCD Campaign DT Speed.md",
       "nodeToken": "ChjWw1gOpibC9Ukk7rmlfBjVgYg",
       "docToken": "KUf5d7JIMoD2uFxeSuGlyqcIgtb",
-      "lastSyncedHash": "238e3320b9a69368e4eb3805d5f0fd50058777a3",
-      "lastSyncedAt": "2026-04-24T12:01:32.728Z"
+      "lastSyncedHash": "15f0f4f18298441af1d1b24b3e9ec6ca4de82919",
+      "lastSyncedAt": "2026-04-24T12:11:20.577Z"
     }
   }
 }

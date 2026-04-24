@@ -1,6 +1,5 @@
 import { spawn } from "child_process";
 import type { LarkWikiSyncSettings } from "../settings";
-import { larkToObsidianMarkdown } from "../util/larkToObsidianMd";
 
 export interface WikiNode {
   space_id: string;
@@ -148,7 +147,31 @@ export class LarkCli {
     const r = await this.run(["docs", "+fetch", "--doc", docToken, "--format", "pretty"], {
       raw: true,
     });
-    return larkToObsidianMarkdown(r as unknown as string);
+    return r as unknown as string;
+  }
+
+  /**
+   * Download a media asset (image, attachment) to the given absolute folder.
+   * lark-cli requires --output to be a relative path, so we set the child's
+   * cwd to the absolute folder and pass `./<basename>` as the output.
+   * Returns the final filename (including the auto-detected extension) or null.
+   */
+  async downloadMedia(fileToken: string, absoluteFolder: string): Promise<string | null> {
+    const r = await this.run(
+      [
+        "docs",
+        "+media-download",
+        "--token",
+        fileToken,
+        "--output",
+        `./${fileToken}`,
+        "--overwrite",
+      ],
+      { cwd: absoluteFolder },
+    );
+    const savedPath: string | undefined = r?.data?.saved_path;
+    if (!savedPath) return null;
+    return savedPath.split("/").pop() ?? null;
   }
 
   async createDoc(title: string, markdown: string, folderToken?: string) {
@@ -174,7 +197,7 @@ export class LarkCli {
 
   private run(
     args: string[],
-    opts: { stdin?: string; raw?: boolean } = {},
+    opts: { stdin?: string; raw?: boolean; cwd?: string } = {},
   ): Promise<any> {
     const bin = this.settings.larkCliPath || "lark-cli";
     const fullArgs = [...args, "--as", this.settings.larkIdentity];
@@ -182,6 +205,7 @@ export class LarkCli {
     return new Promise((resolve, reject) => {
       const proc = spawn(bin, fullArgs, {
         env: { ...process.env, PATH: augmentedPath() },
+        cwd: opts.cwd,
       });
 
       let stdout = "";
