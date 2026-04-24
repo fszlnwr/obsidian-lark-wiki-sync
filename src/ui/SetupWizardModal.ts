@@ -25,14 +25,16 @@ export class SetupWizardModal extends Modal {
   private draft = {
     larkCliPath: "",
     wikiSpaceId: "",
+    wikiSpaceName: "",
     wikiRootNode: "",
-    localRoot: "📥 Wiki",
+    localRoot: "📥 Lark",
   };
 
   constructor(app: App, private plugin: LarkWikiSyncPlugin) {
     super(app);
     this.draft.larkCliPath = plugin.settings.larkCliPath;
     this.draft.wikiSpaceId = plugin.settings.wikiSpaceId;
+    this.draft.wikiSpaceName = plugin.settings.wikiSpaceName;
     this.draft.wikiRootNode = plugin.settings.wikiRootNode;
     this.draft.localRoot = plugin.settings.localRoot;
   }
@@ -158,6 +160,7 @@ export class SetupWizardModal extends Modal {
         }
         d.setValue(this.draft.wikiSpaceId).onChange((v) => {
           this.draft.wikiSpaceId = v;
+          this.draft.wikiSpaceName = this.spaces.find((s) => s.space_id === v)?.name ?? "";
           this.urlResolved = false;
           this.draft.wikiRootNode = "";
         });
@@ -241,6 +244,7 @@ export class SetupWizardModal extends Modal {
         }
       }
       const spaceName = this.spaces.find((s) => s.space_id === node.space_id)?.name ?? node.space_id;
+      this.draft.wikiSpaceName = spaceName;
 
       this.urlStatus = {
         kind: "ok",
@@ -281,13 +285,22 @@ export class SetupWizardModal extends Modal {
   private renderLocal() {
     new Setting(this.contentEl)
       .setName("Local folder (vault-relative)")
-      .setDesc("Files from the wiki will be written here.")
+      .setDesc(
+        "Parent folder for all synced wiki spaces. Each space will land in its own subfolder under this.",
+      )
       .addText((t) =>
         t
-          .setPlaceholder("📥 Wiki")
+          .setPlaceholder("📥 Lark")
           .setValue(this.draft.localRoot)
           .onChange((v) => (this.draft.localRoot = v.trim())),
       );
+
+    if (this.draft.wikiSpaceName) {
+      this.contentEl.createEl("p", {
+        text: `Files will land at: ${this.draft.localRoot}/${this.draft.wikiSpaceName}/...`,
+        cls: "setting-item-description",
+      });
+    }
 
     this.addNavButtons({
       back: () => (this.step = this.urlResolved ? "space" : "root"),
@@ -296,11 +309,18 @@ export class SetupWizardModal extends Modal {
   }
 
   private renderConfirm() {
+    const spaceLabel = this.draft.wikiSpaceName
+      ? `${this.draft.wikiSpaceName} (${this.draft.wikiSpaceId})`
+      : this.draft.wikiSpaceId;
+    const effectivePath = this.draft.wikiSpaceName
+      ? `${this.draft.localRoot}/${this.draft.wikiSpaceName}`
+      : this.draft.localRoot;
+
     const list = this.contentEl.createEl("ul");
     list.createEl("li", { text: `lark-cli: ${this.draft.larkCliPath || "(PATH)"}` });
-    list.createEl("li", { text: `Space: ${this.draft.wikiSpaceId}` });
+    list.createEl("li", { text: `Space: ${spaceLabel}` });
     list.createEl("li", { text: `Root node: ${this.draft.wikiRootNode || "(whole space)"}` });
-    list.createEl("li", { text: `Local folder: ${this.draft.localRoot}` });
+    list.createEl("li", { text: `Will sync to: ${effectivePath}/` });
 
     this.addNavButtons({
       back: () => (this.step = "local"),
@@ -319,6 +339,7 @@ export class SetupWizardModal extends Modal {
   private async savePartial() {
     this.plugin.settings.larkCliPath = this.draft.larkCliPath;
     this.plugin.settings.wikiSpaceId = this.draft.wikiSpaceId;
+    this.plugin.settings.wikiSpaceName = this.draft.wikiSpaceName;
     this.plugin.settings.wikiRootNode = this.draft.wikiRootNode;
     this.plugin.settings.localRoot = this.draft.localRoot;
     await this.plugin.saveSettings();

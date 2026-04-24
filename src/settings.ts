@@ -17,10 +17,15 @@ export interface LarkWikiSyncSettings {
   /** Lark Wiki space ID to sync with. */
   wikiSpaceId: string;
 
+  /** Human-readable space name — used as the first subfolder under localRoot
+   * so each synced space gets its own self-contained folder. */
+  wikiSpaceName: string;
+
   /** Optional: node token inside the space to scope the sync root. Empty = whole space. */
   wikiRootNode: string;
 
-  /** Local folder (vault-relative) that mirrors the wiki. */
+  /** Local folder (vault-relative) — parent for all synced wiki spaces.
+   * Files land in `${localRoot}/${wikiSpaceName}/...`. */
   localRoot: string;
 
   /** Sync direction. */
@@ -44,8 +49,9 @@ export const DEFAULT_SETTINGS: LarkWikiSyncSettings = {
   larkCliPath: "",
   larkIdentity: "user",
   wikiSpaceId: "",
+  wikiSpaceName: "",
   wikiRootNode: "",
-  localRoot: "📥 Wiki",
+  localRoot: "📥 Lark",
   direction: "bidirectional",
   ignorePatterns: [".obsidian/**", "**/.DS_Store", "**/node_modules/**"],
   autoSyncIntervalMinutes: 0,

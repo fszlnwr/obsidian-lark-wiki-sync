@@ -839,6 +839,90 @@
       "docToken": "KUf5d7JIMoD2uFxeSuGlyqcIgtb",
       "lastSyncedHash": "15f0f4f18298441af1d1b24b3e9ec6ca4de82919",
       "lastSyncedAt": "2026-04-24T12:11:20.577Z"
+    },
+    "📥 Wiki Release Notes/v1.6.4 — Campaign Lifecycle Controls & Reward Personalization Refinements.md": {
+      "localPath": "📥 Wiki Release Notes/v1.6.4 — Campaign Lifecycle Controls & Reward Personalization Refinements.md",
+      "nodeToken": "T6KDwHIxNiloIjkKdAzlAIUOgTc",
+      "docToken": "NXOLdHp2mooe6JxdgIell5x6g3b",
+      "lastSyncedHash": "c987429d70463d0069ec1b42e94d493824aa3106",
+      "lastSyncedAt": "2026-04-24T12:42:46.144Z"
+    },
+    "📥 Wiki Release Notes/v1.6.3 — Campaign to Push Notification Controls & Content Management Upgrade.md": {
+      "localPath": "📥 Wiki Release Notes/v1.6.3 — Campaign to Push Notification Controls & Content Management Upgrade.md",
+      "nodeToken": "Jn3KwfUXhiCfbCk2UzDlMWvCgvf",
+      "docToken": "ThwYdVcG9oKGs1xrovHlmjomgI5",
+      "lastSyncedHash": "bde40cf5829c8020448165d9d13fcc54691dbd6d",
+      "lastSyncedAt": "2026-04-24T12:42:47.747Z"
+    },
+    "📥 Wiki Release Notes/v1.6.2 — API Documentation Upgrade & Search Segment Feature.md": {
+      "localPath": "📥 Wiki Release Notes/v1.6.2 — API Documentation Upgrade & Search Segment Feature.md",
+      "nodeToken": "OHohwfK1tiOeFVkfmuil3gL6gDh",
+      "docToken": "HMsAdo0DIom4BSxVCR3lzTrJgHb",
+      "lastSyncedHash": "69addf35fa35e4f43342829f4e292b114bf9b1cb",
+      "lastSyncedAt": "2026-04-24T12:42:48.964Z"
+    },
+    "📥 Wiki Release Notes/v1.6.1 — Stability & Dependency Hardening.md": {
+      "localPath": "📥 Wiki Release Notes/v1.6.1 — Stability & Dependency Hardening.md",
+      "nodeToken": "QcswwJUZMi2JXLkNlG0llr2Jgbr",
+      "docToken": "XLWwdECUOoALB5xBhH2lttzng4g",
+      "lastSyncedHash": "e4245fd81c24101fa20c72480400b91f388fc319",
+      "lastSyncedAt": "2026-04-24T12:42:50.591Z"
+    },
+    "📥 Wiki Release Notes/v1.6.0 — Paid Membership & Member Groups.md": {
+      "localPath": "📥 Wiki Release Notes/v1.6.0 — Paid Membership & Member Groups.md",
+      "nodeToken": "BeGYwTitditiVfkaYHhlbLOwgXf",
+      "docToken": "UVhjdLPwyow0X8xWlY7llZx4gDf",
+      "lastSyncedHash": "59a77968fcadf633dc0e631707bc83b28a8c0a14",
+      "lastSyncedAt": "2026-04-24T12:42:52.157Z"
+    },
+    "📥 Wiki Release Notes/v1.5.1 — Personalization Is Live (Category-Driven Catalog).md": {
+      "localPath": "📥 Wiki Release Notes/v1.5.1 — Personalization Is Live (Category-Driven Catalog).md",
+      "nodeToken": "MpdFwgwhAi3w1fkB6d6lEdESgby",
+      "docToken": "BkuKd7IJLodx7ExfADolkxCtg8d",
+      "lastSyncedHash": "f54c57bf020647e28d321a4d7fa181eee841fc71",
+      "lastSyncedAt": "2026-04-24T12:42:55.500Z"
+    },
+    "📥 Wiki Release Notes/v1.5 — Cleaner Campaign Ops, Better Segmentation, Critical Fixes.md": {
+      "localPath": "📥 Wiki Release Notes/v1.5 — Cleaner Campaign Ops, Better Segmentation, Critical Fixes.md",
+      "nodeToken": "KTcLwGKzMilr7okulsHllGSBgwe",
+      "docToken": "DNU1dY37bo0LoBxwhELl8L4bgwb",
+      "lastSyncedHash": "edf800c543a507a574278442c447b71bef9cf48f",
+      "lastSyncedAt": "2026-04-24T12:42:57.998Z"
+    },
+    "📥 Wiki Release Notes/v1.4 — Courtside Integrations, Smarter Rules, Stronger Guardrails.md": {
+      "localPath": "📥 Wiki Release Notes/v1.4 — Courtside Integrations, Smarter Rules, Stronger Guardrails.md",
+      "nodeToken": "KIIfwe32WilVjekaBIel1JuggDd",
+      "docToken": "UZC8dOKFCoKYzcxe5xhl1sVugrb",
+      "lastSyncedHash": "73947755dd53abb276caa269b9356ee792229acc",
+      "lastSyncedAt": "2026-04-24T12:42:59.180Z"
+    },
+    "📥 Wiki Release Notes/v1.3 — Targeting Upgrade & Performance Boost.md": {
+      "localPath": "📥 Wiki Release Notes/v1.3 — Targeting Upgrade & Performance Boost.md",
+      "nodeToken": "OEb9wyDJbi6rU5kUvRtlSe8zg1g",
+      "docToken": "AIcad2PRhoiXTExdEUUlUOz4gbh",
+      "lastSyncedHash": "80b3d260eaa78f701cd3b5984e8fa65b8a221330",
+      "lastSyncedAt": "2026-04-24T12:43:00.420Z"
+    },
+    "📥 Wiki Release Notes/v1.2 — New Reward Type Unlocked.md": {
+      "localPath": "📥 Wiki Release Notes/v1.2 — New Reward Type Unlocked.md",
+      "nodeToken": "XN1NwUr96iA0nNkd0dil8O5ygTe",
+      "docToken": "TcE5dmmDWooAbSxfEdhl5qapghX",
+      "lastSyncedHash": "2737db443e714a50dfd49b5b01b38215d9c032dc",
+      "lastSyncedAt": "2026-04-24T12:43:01.679Z"
+    },
+    "📥 Wiki Release Notes/v1.1 — Core Loyalty Foundation Update.md": {
+      "localPath": "📥 Wiki Release Notes/v1.1 — Core Loyalty Foundation Update.md",
+      "nodeToken": "TsdAw67g9iMcoEkZaCFl3ilrgFb",
+      "docToken": "LBdvdPmxloeTvBxlxgYlwfPygoF",
+      "lastSyncedHash": "8a6e4e5f45be34c09b60b2f6a3496c2697fe3552",
+      "lastSyncedAt": "2026-04-24T12:43:03.546Z"
+    },
+    "📥 Wiki Release Notes/[Draft] — Personalization Is Live.md": {
+      "localPath": "📥 Wiki Release Notes/[Draft] — Personalization Is Live.md",
+      "nodeToken": "IsomwhpU6iG42rksxfQlIyQagEh",
+      "docToken": "UlOxdn1yQo5QfNxJYIaluRLsgKd",
+      "lastSyncedHash": "4eaf8c318f5e1c0f9b857bb31584bf0b2e078df6",
+      "lastSyncedAt": "2026-04-24T12:43:06.216Z"
     }
   }
 }

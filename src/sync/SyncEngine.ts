@@ -58,9 +58,13 @@ export class SyncEngine {
       this.settings.wikiRootNode || undefined,
     );
 
+    // Effective root nests each space under its own subfolder so multiple
+    // synced spaces stay self-contained.
+    const effectiveRoot = this.effectiveRoot();
+
     // Pre-scan the attachments folder once so repeat syncs don't re-download
     // already-cached images.
-    const attachmentsRel = `${this.settings.localRoot}/${ATTACHMENTS_SUBFOLDER}`;
+    const attachmentsRel = `${effectiveRoot}/${ATTACHMENTS_SUBFOLDER}`;
     const attachmentsAbs = this.resolveAttachmentsAbsolutePath();
     const existingAttachments = await this.scanAttachmentsCache(attachmentsRel);
 
@@ -160,12 +164,24 @@ export class SyncEngine {
   // Attachments
   // ---------------------------------------------------------------------------
 
+  /**
+   * Vault-relative root for the currently configured space, e.g.
+   * `📥 Lark/Nexus Wiki`. Falls back to just `localRoot` if the space name
+   * isn't set yet (upgrade path for pre-0.0.9 configs).
+   */
+  private effectiveRoot(): string {
+    const sanitize = (s: string) => s.replace(/[\\/:*?"<>|]/g, "_");
+    const parts = [this.settings.localRoot];
+    if (this.settings.wikiSpaceName) parts.push(sanitize(this.settings.wikiSpaceName));
+    return parts.join("/");
+  }
+
   private resolveAttachmentsAbsolutePath(): string {
     const adapter = this.app.vault.adapter;
     if (!(adapter instanceof FileSystemAdapter)) {
       throw new Error("Lark Wiki Sync requires Obsidian desktop (FileSystemAdapter).");
     }
-    return `${adapter.getBasePath()}/${this.settings.localRoot}/${ATTACHMENTS_SUBFOLDER}`;
+    return `${adapter.getBasePath()}/${this.effectiveRoot()}/${ATTACHMENTS_SUBFOLDER}`;
   }
 
   /**
@@ -238,7 +254,7 @@ export class SyncEngine {
   }): string {
     const sanitize = (s: string) => s.replace(/[\\/:*?"<>|]/g, "_");
     const segments = [
-      this.settings.localRoot,
+      this.effectiveRoot(),
       ...(node.parentPath ?? []).map(sanitize),
       `${sanitize(node.title)}.md`,
     ];
