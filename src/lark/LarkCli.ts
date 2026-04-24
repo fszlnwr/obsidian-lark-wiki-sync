@@ -40,8 +40,10 @@ export class LarkCli {
   // ---------------------------------------------------------------------------
 
   async whoAmI(): Promise<{ name?: string; user_id?: string } | null> {
-    const r = await this.run(["contact", "+me"]);
-    return r?.data ?? null;
+    const r = await this.run(["contact", "+get-user"]);
+    const u = r?.data?.user;
+    if (!u) return null;
+    return { name: u.name ?? u.en_name, user_id: u.user_id ?? u.open_id };
   }
 
   // ---------------------------------------------------------------------------
@@ -54,14 +56,20 @@ export class LarkCli {
   }
 
   async listNodes(spaceId: string, parentNodeToken?: string) {
-    const args = ["wiki", "spaces", "nodes", "list", "--space-id", spaceId];
-    if (parentNodeToken) args.push("--parent-node-token", parentNodeToken);
-    const r = await this.run(args);
+    const params: Record<string, string> = { space_id: spaceId, page_size: "50" };
+    if (parentNodeToken) params.parent_node_token = parentNodeToken;
+    const r = await this.run(["wiki", "nodes", "list", "--params", JSON.stringify(params)]);
     return r?.data?.items ?? [];
   }
 
   async getNode(token: string) {
-    const r = await this.run(["wiki", "spaces", "get_node", "--token", token]);
+    const r = await this.run([
+      "wiki",
+      "spaces",
+      "get_node",
+      "--params",
+      JSON.stringify({ token, obj_type: "wiki" }),
+    ]);
     return r?.data?.node ?? null;
   }
 
@@ -127,7 +135,14 @@ export class LarkCli {
           return;
         }
         try {
-          resolve(JSON.parse(stdout));
+          const parsed = JSON.parse(stdout);
+          if (parsed && parsed.ok === false) {
+            const msg = parsed.error?.message ?? "lark-cli returned ok:false";
+            const hint = parsed.error?.hint ? `\nHint: ${parsed.error.hint}` : "";
+            reject(new Error(`${msg}${hint}`));
+            return;
+          }
+          resolve(parsed);
         } catch (e) {
           reject(new Error(`lark-cli returned non-JSON: ${stdout.slice(0, 200)}`));
         }
