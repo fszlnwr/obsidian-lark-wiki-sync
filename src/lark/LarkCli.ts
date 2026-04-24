@@ -1,5 +1,6 @@
 import { spawn } from "child_process";
 import type { LarkWikiSyncSettings } from "../settings";
+import { larkToObsidianMarkdown } from "../util/larkToObsidianMd";
 
 export interface WikiNode {
   space_id: string;
@@ -147,7 +148,7 @@ export class LarkCli {
     const r = await this.run(["docs", "+fetch", "--doc", docToken, "--format", "pretty"], {
       raw: true,
     });
-    return r as unknown as string;
+    return larkToObsidianMarkdown(r as unknown as string);
   }
 
   async createDoc(title: string, markdown: string, folderToken?: string) {
