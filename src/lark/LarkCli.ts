@@ -126,26 +126,43 @@ export class LarkCli {
       proc.on("error", (err) => reject(new Error(`Failed to spawn lark-cli: ${err.message}`)));
 
       proc.on("close", (code) => {
-        if (code !== 0) {
-          reject(new Error(`lark-cli exit ${code}: ${stderr || stdout}`));
-          return;
-        }
         if (opts.raw) {
+          if (code !== 0) {
+            reject(new Error(`lark-cli exit ${code}: ${stderr || stdout}`));
+            return;
+          }
           resolve(stdout);
           return;
         }
+
+        // lark-cli may exit non-zero but still emit a structured JSON payload
+        // with { ok: false, error: { message, hint } }. Prefer the payload
+        // over the raw exit-code noise.
+        let parsed: any = null;
         try {
-          const parsed = JSON.parse(stdout);
-          if (parsed && parsed.ok === false) {
-            const msg = parsed.error?.message ?? "lark-cli returned ok:false";
-            const hint = parsed.error?.hint ? `\nHint: ${parsed.error.hint}` : "";
-            reject(new Error(`${msg}${hint}`));
-            return;
-          }
-          resolve(parsed);
-        } catch (e) {
-          reject(new Error(`lark-cli returned non-JSON: ${stdout.slice(0, 200)}`));
+          parsed = JSON.parse(stdout);
+        } catch {
+          /* not JSON */
         }
+
+        if (parsed && parsed.ok === false) {
+          const msg = parsed.error?.message ?? "lark-cli returned ok:false";
+          const hint = parsed.error?.hint ? `\nHint: ${parsed.error.hint}` : "";
+          reject(new Error(`${msg}${hint}`));
+          return;
+        }
+
+        if (code !== 0) {
+          reject(new Error(`lark-cli exit ${code}: ${stderr || stdout.slice(0, 200)}`));
+          return;
+        }
+
+        if (parsed === null) {
+          reject(new Error(`lark-cli returned non-JSON: ${stdout.slice(0, 200)}`));
+          return;
+        }
+
+        resolve(parsed);
       });
 
       if (opts.stdin) {
