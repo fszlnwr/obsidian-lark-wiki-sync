@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output
+main.js
+*.map
+
+# OS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Obsidian plugin state (dev)
+data.json
+
+# Local self-symlink used for stable vault plugin-folder names
+/obsidian-lark-wiki-sync
+
+# Logs
+*.log

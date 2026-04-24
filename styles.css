@@ -1,0 +1,14 @@
+.lark-wiki-sync-wizard {
+  max-width: 560px;
+}
+
+.lark-wiki-sync-wizard h2 {
+  margin-top: 0;
+}
+
+.lark-wiki-sync-wizard .modal-button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+}
