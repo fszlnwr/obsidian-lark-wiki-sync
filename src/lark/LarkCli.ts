@@ -1,6 +1,27 @@
 import { spawn } from "child_process";
 import type { LarkWikiSyncSettings } from "../settings";
 
+// Obsidian on macOS spawns subprocesses with a minimal PATH that excludes
+// Homebrew and common node install dirs, so `#!/usr/bin/env node` shebangs
+// (including lark-cli's) fail with "env: node: No such file or directory".
+// Always prepend the usual suspects.
+function augmentedPath(): string {
+  const home = process.env.HOME ?? "";
+  const extras = [
+    "/opt/homebrew/bin",
+    "/opt/homebrew/sbin",
+    "/usr/local/bin",
+    "/usr/local/sbin",
+    `${home}/.local/bin`,
+    `${home}/.nvm/versions/node/current/bin`,
+    `${home}/.volta/bin`,
+    `${home}/.fnm/current/bin`,
+  ];
+  const existing = (process.env.PATH ?? "").split(":").filter(Boolean);
+  const seen = new Set<string>();
+  return [...extras, ...existing].filter((p) => !seen.has(p) && seen.add(p)).join(":");
+}
+
 /**
  * Thin wrapper around the lark-cli binary.
  *
@@ -85,7 +106,7 @@ export class LarkCli {
 
     return new Promise((resolve, reject) => {
       const proc = spawn(bin, fullArgs, {
-        env: { ...process.env },
+        env: { ...process.env, PATH: augmentedPath() },
       });
 
       let stdout = "";
