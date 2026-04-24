@@ -1,6 +1,20 @@
 import { spawn } from "child_process";
 import type { LarkWikiSyncSettings } from "../settings";
 
+export interface WikiNode {
+  space_id: string;
+  node_token: string;
+  obj_token: string;
+  obj_type: string;
+  title: string;
+  has_child?: boolean;
+  [key: string]: any;
+}
+
+export interface WikiNodeWithPath extends WikiNode {
+  parentPath: string[];
+}
+
 // Obsidian on macOS spawns subprocesses with a minimal PATH that excludes
 // Homebrew and common node install dirs, so `#!/usr/bin/env node` shebangs
 // (including lark-cli's) fail with "env: node: No such file or directory".
@@ -56,10 +70,19 @@ export class LarkCli {
   }
 
   async listNodes(spaceId: string, parentNodeToken?: string) {
-    const params: Record<string, string> = { space_id: spaceId, page_size: "50" };
-    if (parentNodeToken) params.parent_node_token = parentNodeToken;
-    const r = await this.run(["wiki", "nodes", "list", "--params", JSON.stringify(params)]);
-    return r?.data?.items ?? [];
+    const out: any[] = [];
+    let pageToken = "";
+    while (true) {
+      const params: Record<string, any> = { space_id: spaceId, page_size: 50 };
+      if (parentNodeToken) params.parent_node_token = parentNodeToken;
+      if (pageToken) params.page_token = pageToken;
+      const r = await this.run(["wiki", "nodes", "list", "--params", JSON.stringify(params)]);
+      out.push(...(r?.data?.items ?? []));
+      if (!r?.data?.has_more) break;
+      pageToken = r?.data?.page_token ?? "";
+      if (!pageToken) break;
+    }
+    return out;
   }
 
   async getNode(token: string) {
@@ -71,6 +94,49 @@ export class LarkCli {
       JSON.stringify({ token, obj_type: "wiki" }),
     ]);
     return r?.data?.node ?? null;
+  }
+
+  /**
+   * Walk the entire node tree starting from `rootToken` (or the whole space
+   * if omitted) and return every node flat, with `parentPath` (ancestor
+   * titles) attached so callers can mirror the tree into folders.
+   *
+   * - Paginates every level via listNodes().
+   * - Recurses into any node with has_child === true, regardless of obj_type
+   *   (a non-docx node can still have docx descendants we want to pull).
+   * - If a specific root is provided, the root itself is included too, so
+   *   URLs that point directly at a leaf doc still sync that one doc.
+   */
+  async listAllDescendants(
+    spaceId: string,
+    rootToken?: string,
+    maxDepth = 20,
+  ): Promise<WikiNodeWithPath[]> {
+    const out: WikiNodeWithPath[] = [];
+
+    if (rootToken) {
+      const root = await this.getNode(rootToken);
+      if (root) out.push({ ...root, parentPath: [] });
+    }
+
+    const walk = async (parentToken: string | undefined, parentPath: string[]) => {
+      if (parentPath.length > maxDepth) {
+        console.warn(
+          `LarkWikiSync: max tree depth ${maxDepth} exceeded at ${parentPath.join("/")}; stopping recursion here.`,
+        );
+        return;
+      }
+      const children = await this.listNodes(spaceId, parentToken);
+      for (const n of children) {
+        out.push({ ...n, parentPath });
+        if (n.has_child) {
+          await walk(n.node_token, [...parentPath, n.title]);
+        }
+      }
+    };
+
+    await walk(rootToken, []);
+    return out;
   }
 
   // ---------------------------------------------------------------------------

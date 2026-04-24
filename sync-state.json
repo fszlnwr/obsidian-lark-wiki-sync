@@ -1,0 +1,102 @@
+{
+  "files": {
+    "📥 Wiki Nexus/🎨 Figma.md": {
+      "localPath": "📥 Wiki Nexus/🎨 Figma.md",
+      "nodeToken": "PiuEwa4Omi7mfhkQVzqlRAPLgHf",
+      "docToken": "N31jdRPgMoFP17xbm3OlErMjgVh",
+      "lastSyncedHash": "43dd0745b424df98e616eabdab8f293d96e842b5",
+      "lastSyncedAt": "2026-04-24T11:47:23.923Z"
+    },
+    "📥 Wiki Nexus/🔌 Integration Documentation.md": {
+      "localPath": "📥 Wiki Nexus/🔌 Integration Documentation.md",
+      "nodeToken": "UqMpwVxQ8iJJlUkzwRclLbIegrb",
+      "docToken": "JEdRdwLigomkV9xP6C3ldapfg9b",
+      "lastSyncedHash": "1e0024598b6c826b4d77cc8d475bdb13013d9f6f",
+      "lastSyncedAt": "2026-04-24T11:47:25.954Z"
+    },
+    "📥 Wiki Nexus/📈 Loyalty & CDP_Engagement Platform References.md": {
+      "localPath": "📥 Wiki Nexus/📈 Loyalty & CDP_Engagement Platform References.md",
+      "nodeToken": "TfV7wQlfziSivrk3fl1lO5nmg6f",
+      "docToken": "JPznd23FWoECa7x5Zk6lRdSRg8b",
+      "lastSyncedHash": "648d255e52f4bfd06d0dad372b3c5b4ef74098d0",
+      "lastSyncedAt": "2026-04-24T11:47:27.702Z"
+    },
+    "📥 Wiki Nexus/📚 Learning Resources.md": {
+      "localPath": "📥 Wiki Nexus/📚 Learning Resources.md",
+      "nodeToken": "PyynwWTVIiGBAKkqFOilszh2gUc",
+      "docToken": "PlJFdWF5YoQsuPx9hpPlE0q8gHh",
+      "lastSyncedHash": "7f0c9a9b2571a3fe10f19d263bd4d36d6a528237",
+      "lastSyncedAt": "2026-04-24T11:47:29.449Z"
+    },
+    "📥 Wiki Nexus/📊 Competitor Analysis.md": {
+      "localPath": "📥 Wiki Nexus/📊 Competitor Analysis.md",
+      "nodeToken": "R9Afw9ZHhiJ4DnkuCorlQkCxgeg",
+      "docToken": "Sk7od4eTyoOUDkx4pR3lCXntgSg",
+      "lastSyncedHash": "d4b9d09d7d34ff982491765734ce27e5a1aedecc",
+      "lastSyncedAt": "2026-04-24T11:47:31.601Z"
+    },
+    "📥 Wiki Nexus/✅ Competitor Platform Learning Checklist.md": {
+      "localPath": "📥 Wiki Nexus/✅ Competitor Platform Learning Checklist.md",
+      "nodeToken": "CnTCwCdqaimVSYkbppYlc86Agoe",
+      "docToken": "De3hdPrNjoWZCyxmWKClTaq5gef",
+      "lastSyncedHash": "f4fd12148bdd42510aa0ad3a7a0f93b1040256c7",
+      "lastSyncedAt": "2026-04-24T11:47:33.228Z"
+    },
+    "📥 Wiki Nexus/📚 [WIP] Loyalty Strategy Playbook.md": {
+      "localPath": "📥 Wiki Nexus/📚 [WIP] Loyalty Strategy Playbook.md",
+      "nodeToken": "MjVrwG784iB1e5kgEFElIV9xg7g",
+      "docToken": "RWjDdPZFQoPPLBxNSjtluecVgwh",
+      "lastSyncedHash": "b6089ec5589fd07a4f9d61faaddb88df68738ba2",
+      "lastSyncedAt": "2026-04-24T11:47:34.783Z"
+    },
+    "📥 Wiki Nexus/FRD.md": {
+      "localPath": "📥 Wiki Nexus/FRD.md",
+      "nodeToken": "FtWNwVbLAibgCAkNoKWl4RX8gof",
+      "docToken": "XyH4dJZB3oEKsGxeIpfl2tadgYc",
+      "lastSyncedHash": "08c4462fe5a7066dde48264c5dcf80b86ff283c2",
+      "lastSyncedAt": "2026-04-24T11:47:36.227Z"
+    },
+    "📥 Wiki Nexus/FSD.md": {
+      "localPath": "📥 Wiki Nexus/FSD.md",
+      "nodeToken": "SPFLwTl3ni1Lcfk4L4DlPVeTgMg",
+      "docToken": "DgWvdicl4oMdLyx8ACFlvcapgpe",
+      "lastSyncedHash": "72668eca75388c69b8cfb80c71f800781edc4a9f",
+      "lastSyncedAt": "2026-04-24T11:47:37.538Z"
+    },
+    "📥 Wiki Nexus/📝 Minutes of Meeting (MoM).md": {
+      "localPath": "📥 Wiki Nexus/📝 Minutes of Meeting (MoM).md",
+      "nodeToken": "MsG4wmWVaimzLnkAX2OllNaSgVh",
+      "docToken": "M71idwhd6oaRbixm8FJlfc6vglf",
+      "lastSyncedHash": "357f3aa25eb14f217008cdfe78d641d56b6f1f85",
+      "lastSyncedAt": "2026-04-24T11:47:38.838Z"
+    },
+    "📥 Wiki Nexus/Nexus Product Development & Deployment Flow.md": {
+      "localPath": "📥 Wiki Nexus/Nexus Product Development & Deployment Flow.md",
+      "nodeToken": "XR0jw2n4iiQikWkauDVlcOiBgjg",
+      "docToken": "INkSdVxwloU9y4xiQnWlRqJPgBh",
+      "lastSyncedHash": "1150b242943e649d4ff3418d04a733285102f8e5",
+      "lastSyncedAt": "2026-04-24T11:47:40.689Z"
+    },
+    "📥 Wiki Nexus/Antiloyalty Server Cost - Based on MAU.md": {
+      "localPath": "📥 Wiki Nexus/Antiloyalty Server Cost - Based on MAU.md",
+      "nodeToken": "TBWfwtcDWi0DsgkZV5ZlrUgsgrf",
+      "docToken": "KNb9dyFNGokcVLxuthMlIWtUgnd",
+      "lastSyncedHash": "20b4d999830b2ef133c40af73ed4f3b68cabd63b",
+      "lastSyncedAt": "2026-04-24T11:47:42.747Z"
+    },
+    "📥 Wiki Nexus/Nexus _ Weekly Progress Report.md": {
+      "localPath": "📥 Wiki Nexus/Nexus _ Weekly Progress Report.md",
+      "nodeToken": "MxnYw5sySiIyvekOwZeltdOGgsf",
+      "docToken": "MfhmdK3e2o8fM5xJKOdlZCLLg6c",
+      "lastSyncedHash": "10dde8482bf863c81e85b107bfc83936aa2b96ac",
+      "lastSyncedAt": "2026-04-24T11:47:49.863Z"
+    },
+    "📥 Wiki Nexus/Technical Document.md": {
+      "localPath": "📥 Wiki Nexus/Technical Document.md",
+      "nodeToken": "NFWjwVpguip8MYkoebJlSpP3g3g",
+      "docToken": "PPEjdzvhqoc7WuxnViil5CqSgdc",
+      "lastSyncedHash": "3b9e1864951ebaadc68aac8c89b02483ff2dc0b9",
+      "lastSyncedAt": "2026-04-24T11:47:51.530Z"
+    }
+  }
+}

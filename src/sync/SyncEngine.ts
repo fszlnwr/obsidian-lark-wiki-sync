@@ -50,7 +50,7 @@ export class SyncEngine {
       throw new Error("No Wiki space configured. Run the setup wizard.");
     }
 
-    const nodes = await this.lark.listNodes(
+    const nodes = await this.lark.listAllDescendants(
       this.settings.wikiSpaceId,
       this.settings.wikiRootNode || undefined,
     );
@@ -148,21 +148,41 @@ export class SyncEngine {
     title: string;
     node_token: string;
     obj_type: string;
+    parentPath?: string[];
   }): string {
-    const safeTitle = node.title.replace(/[\\/:*?"<>|]/g, "_");
-    return normalizePath(`${this.settings.localRoot}/${safeTitle}.md`);
+    const sanitize = (s: string) => s.replace(/[\\/:*?"<>|]/g, "_");
+    const segments = [
+      this.settings.localRoot,
+      ...(node.parentPath ?? []).map(sanitize),
+      `${sanitize(node.title)}.md`,
+    ];
+    return normalizePath(segments.join("/"));
   }
 
   private async writeLocal(path: string, content: string): Promise<void> {
     const folder = path.substring(0, path.lastIndexOf("/"));
-    if (folder && !(await this.app.vault.adapter.exists(folder))) {
-      await this.app.vault.createFolder(folder);
-    }
+    if (folder) await this.ensureFolder(folder);
     const existing = this.app.vault.getAbstractFileByPath(path);
     if (existing instanceof TFile) {
       await this.app.vault.modify(existing, content);
     } else {
       await this.app.vault.create(path, content);
+    }
+  }
+
+  private async ensureFolder(folder: string): Promise<void> {
+    const parts = folder.split("/").filter(Boolean);
+    let cur = "";
+    for (const p of parts) {
+      cur = cur ? `${cur}/${p}` : p;
+      if (!(await this.app.vault.adapter.exists(cur))) {
+        try {
+          await this.app.vault.createFolder(cur);
+        } catch (err) {
+          // race: another op may have created it in parallel; re-check
+          if (!(await this.app.vault.adapter.exists(cur))) throw err;
+        }
+      }
     }
   }
 
