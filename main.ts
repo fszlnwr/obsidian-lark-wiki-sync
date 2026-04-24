@@ -1,12 +1,12 @@
-import { Plugin, Notice, addIcon } from "obsidian";
+import { Plugin, Notice } from "obsidian";
 import { LarkWikiSyncSettings, DEFAULT_SETTINGS, LarkWikiSyncSettingTab } from "./src/settings";
 import { SetupWizardModal } from "./src/ui/SetupWizardModal";
 import { SyncEngine } from "./src/sync/SyncEngine";
 import { LarkCli } from "./src/lark/LarkCli";
 import { StateStore } from "./src/state/StateStore";
 
-const RIBBON_ICON_ID = "lark-wiki-sync-icon";
-const RIBBON_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9m0 0a9 9 0 0 1-9-9m9 9V3m0 0a9 9 0 0 1 9 9m-9-9a9 9 0 0 0-9 9"/></svg>`;
+// Obsidian ships with Lucide icons; "sync" renders as the two-arrow cycle.
+const RIBBON_ICON_ID = "sync";
 
 export default class LarkWikiSyncPlugin extends Plugin {
   settings!: LarkWikiSyncSettings;
@@ -21,8 +21,6 @@ export default class LarkWikiSyncPlugin extends Plugin {
     this.state = new StateStore(this.app, this.manifest.id);
     await this.state.load();
     this.syncEngine = new SyncEngine(this.app, this.settings, this.lark, this.state);
-
-    addIcon(RIBBON_ICON_ID, RIBBON_ICON_SVG);
 
     this.addRibbonIcon(RIBBON_ICON_ID, "Lark Wiki Sync", async () => {
       if (!this.settings.configured) {
