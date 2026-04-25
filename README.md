@@ -13,6 +13,7 @@ Sync one or more Lark Wiki spaces into your Obsidian vault. Uses [`lark-cli`](ht
 - **Inline images.** `<image token="…"/>` references download via `lark-cli docs +media-download` into `_attachments/<token>.<ext>` and embed as `![[<token>.<ext>]]`. Cached across syncs.
 - **3-way diff classification.** Per-file `lastSyncedHash` enables proper conflict detection (skip / pull / push / conflict / reconcile). Sync state is keyed by Lark `nodeToken`, so it survives any future path-mapping changes.
 - **Push confirmation.** When the engine plans to upload local edits to Lark, a modal lists every file going up so you can cancel before anything is overwritten remotely. Toggle in settings.
+- **Per-file error visibility.** If any pull/push/conflict step fails (missing scope, rate limit, malformed content), a results modal pops up after sync listing every failure with the actual `lark-cli` error message, so you don't have to spelunk through the dev console.
 - **One-click sync.** Ribbon icon (Lucide `sync`) and command palette entries.
 
 ## Prerequisites
@@ -110,6 +111,7 @@ Special branches when there is no prior `lastSyncedHash` (first sync of a node, 
 - [x] v0.0.9 — per-space subfolder, default root `📥 Lark`
 - [x] v0.0.10 — multi-space configuration
 - [x] v0.0.11 — push path actually fires (state keyed by `nodeToken`, reconcile branch); push confirmation modal
+- [x] v0.0.12 — per-action error surfacing (results modal lists every failure with the real lark-cli message)
 - [ ] v0.1.0 — inverse Obsidian→Lark transform so files with tables/images round-trip cleanly through push
 - [ ] v0.2.0 — three-way diff conflict modal
 - [ ] v0.3.0 — wikilink ↔ Lark internal link conversion

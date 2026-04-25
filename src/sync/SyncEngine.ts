@@ -7,12 +7,19 @@ import { extractImageTokens, larkToObsidianMarkdown } from "../util/larkToObsidi
 
 const ATTACHMENTS_SUBFOLDER = "_attachments";
 
+export interface SyncError {
+  phase: "pull" | "push" | "conflict" | "fetch" | "plan";
+  file: string;
+  message: string;
+}
+
 export interface SyncResult {
   pulled: number;
   pushed: number;
   conflicts: number;
   skipped: number;
   reconciled: number;
+  errors: SyncError[];
 }
 
 /** Items intended for execution after planning. */
@@ -93,6 +100,7 @@ export class SyncEngine {
         conflicts: plan.conflicts.length,
         skipped: plan.skipped,
         reconciled: plan.reconciles.length,
+        errors: [],
       };
     }
 
@@ -140,6 +148,7 @@ export class SyncEngine {
       conflicts: 0,
       skipped: plan.skipped,
       reconciled: 0,
+      errors: [],
     };
 
     for (const r of plan.reconciles) {
@@ -153,7 +162,9 @@ export class SyncEngine {
         this.recordSync(p.localPath, p.node.node_token, p.node.obj_token, p.remoteHash);
         result.pulled++;
       } catch (err) {
+        const message = (err as Error).message ?? String(err);
         console.error(`LarkWikiSync: pull failed for ${p.localPath}:`, err);
+        result.errors.push({ phase: "pull", file: p.localPath, message });
       }
     }
 
@@ -163,7 +174,9 @@ export class SyncEngine {
         this.recordSync(p.localPath, p.node.node_token, p.node.obj_token, p.localHash);
         result.pushed++;
       } catch (err) {
+        const message = (err as Error).message ?? String(err);
         console.error(`LarkWikiSync: push failed for ${p.localPath}:`, err);
+        result.errors.push({ phase: "push", file: p.localPath, message });
       }
     }
 
@@ -172,7 +185,9 @@ export class SyncEngine {
         await this.handleConflict(c);
         result.conflicts++;
       } catch (err) {
+        const message = (err as Error).message ?? String(err);
         console.error(`LarkWikiSync: conflict handling failed for ${c.localPath}:`, err);
+        result.errors.push({ phase: "conflict", file: c.localPath, message });
       }
     }
 
