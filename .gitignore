@@ -12,8 +12,10 @@ main.js
 .vscode/
 .idea/
 
-# Obsidian plugin state (dev)
+# Obsidian plugin state (dev — written here when the plugin is
+# symlinked into a vault; do NOT commit, contains per-vault tokens)
 data.json
+sync-state.json
 
 # Local self-symlink used for stable vault plugin-folder names
 /obsidian-lark-wiki-sync
