@@ -86,7 +86,28 @@ export default class LarkWikiSyncPlugin extends Plugin {
   }
 
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    const raw = (await this.loadData()) as Record<string, unknown> | null;
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, raw ?? {});
+
+    // Migration: pre-0.0.10 stored a single space inline as wikiSpaceId /
+    // wikiSpaceName / wikiRootNode. Hoist it into spaces[] and drop the
+    // legacy keys so the schema stays clean.
+    const legacyId = raw?.wikiSpaceId as string | undefined;
+    const hasNoSpaces = !this.settings.spaces || this.settings.spaces.length === 0;
+    if (legacyId && hasNoSpaces) {
+      this.settings.spaces = [
+        {
+          spaceId: legacyId,
+          spaceName: (raw?.wikiSpaceName as string | undefined) ?? "",
+          rootNode: (raw?.wikiRootNode as string | undefined) ?? "",
+        },
+      ];
+      const bag = this.settings as unknown as Record<string, unknown>;
+      delete bag.wikiSpaceId;
+      delete bag.wikiSpaceName;
+      delete bag.wikiRootNode;
+      await this.saveData(this.settings);
+    }
   }
 
   async saveSettings() {

@@ -5,14 +5,17 @@ import { parseWikiUrl } from "../util/parseWikiUrl";
 type WizardStep = "intro" | "auth" | "space" | "root" | "local" | "confirm";
 
 /**
- * Multi-step setup wizard for first-time configuration.
+ * Multi-step "add a wiki space" wizard.
  *
  *   intro   — explain what will happen
  *   auth    — verify lark-cli is reachable + identity known
- *   space   — pick wiki space (dropdown fed from lark-cli wiki spaces list)
- *   root    — pick root node inside the space (tree, v0.1 = free-text token)
- *   local   — choose vault-relative folder
- *   confirm — summary + save
+ *   space   — pick wiki space (dropdown) or paste a wiki link
+ *   root    — pick a sub-tree root (skipped when the URL flow already set one)
+ *   local   — choose vault-relative parent folder for all spaces
+ *   confirm — summary + append-to-spaces
+ *
+ * The wizard appends to settings.spaces[]. Re-running it adds another space;
+ * existing entries are not modified. Removal happens from the settings tab.
  */
 export class SetupWizardModal extends Modal {
   private step: WizardStep = "intro";
@@ -24,18 +27,15 @@ export class SetupWizardModal extends Modal {
 
   private draft = {
     larkCliPath: "",
-    wikiSpaceId: "",
-    wikiSpaceName: "",
-    wikiRootNode: "",
+    spaceId: "",
+    spaceName: "",
+    rootNode: "",
     localRoot: "📥 Lark",
   };
 
   constructor(app: App, private plugin: LarkWikiSyncPlugin) {
     super(app);
     this.draft.larkCliPath = plugin.settings.larkCliPath;
-    this.draft.wikiSpaceId = plugin.settings.wikiSpaceId;
-    this.draft.wikiSpaceName = plugin.settings.wikiSpaceName;
-    this.draft.wikiRootNode = plugin.settings.wikiRootNode;
     this.draft.localRoot = plugin.settings.localRoot;
   }
 
@@ -51,8 +51,15 @@ export class SetupWizardModal extends Modal {
   private render() {
     const { contentEl } = this;
     contentEl.empty();
-    contentEl.createEl("h2", { text: "Lark Wiki Sync — Setup" });
-    contentEl.createEl("p", { text: `Step: ${this.stepLabel()}`, cls: "setting-item-description" });
+    const heading =
+      this.plugin.settings.spaces.length === 0
+        ? "Lark Wiki Sync — Setup"
+        : "Lark Wiki Sync — Add a space";
+    contentEl.createEl("h2", { text: heading });
+    contentEl.createEl("p", {
+      text: `Step: ${this.stepLabel()}`,
+      cls: "setting-item-description",
+    });
 
     switch (this.step) {
       case "intro":
@@ -78,12 +85,18 @@ export class SetupWizardModal extends Modal {
   // ---- Steps ---------------------------------------------------------------
 
   private renderIntro() {
+    const isFirstSpace = this.plugin.settings.spaces.length === 0;
     this.contentEl.createEl("p", {
-      text:
-        "This wizard will: (1) verify lark-cli is installed & authorized, " +
-        "(2) pick a Lark Wiki space + optional root, " +
-        "(3) pick the local vault folder that mirrors it, and (4) save the config.",
+      text: isFirstSpace
+        ? "This wizard will: (1) verify lark-cli is installed & authorized, (2) pick a Lark Wiki space + optional root, (3) pick the local vault folder that mirrors it, and (4) save the config."
+        : "Adding another wiki space. Each space lives in its own subfolder under the local root, so they stay self-contained.",
     });
+    if (!isFirstSpace) {
+      const list = this.contentEl.createEl("ul");
+      for (const s of this.plugin.settings.spaces) {
+        list.createEl("li", { text: `Already configured: ${s.spaceName || s.spaceId}` });
+      }
+    }
     this.addNavButtons({ next: () => (this.step = "auth") });
   }
 
@@ -103,7 +116,7 @@ export class SetupWizardModal extends Modal {
       .addButton((btn) =>
         btn.setButtonText("Run lark-cli contact +me").onClick(async () => {
           try {
-            await this.savePartial();
+            await this.persistConnectionFields();
             const me = await this.plugin.lark.whoAmI();
             if (me) {
               new Notice(`Connected as ${me.name ?? me.user_id ?? "unknown"}`);
@@ -158,11 +171,11 @@ export class SetupWizardModal extends Modal {
         for (const s of this.spaces) {
           d.addOption(s.space_id, s.name);
         }
-        d.setValue(this.draft.wikiSpaceId).onChange((v) => {
-          this.draft.wikiSpaceId = v;
-          this.draft.wikiSpaceName = this.spaces.find((s) => s.space_id === v)?.name ?? "";
+        d.setValue(this.draft.spaceId).onChange((v) => {
+          this.draft.spaceId = v;
+          this.draft.spaceName = this.spaces.find((s) => s.space_id === v)?.name ?? "";
           this.urlResolved = false;
-          this.draft.wikiRootNode = "";
+          this.draft.rootNode = "";
         });
       });
     } else {
@@ -198,10 +211,10 @@ export class SetupWizardModal extends Modal {
             new Notice("Resolve the link first.");
             return;
           }
-          this.step = "local"; // wikiRootNode already set — skip the root step
+          this.step = "local"; // rootNode already set — skip the root step
           return;
         }
-        if (!this.draft.wikiSpaceId) {
+        if (!this.draft.spaceId) {
           new Notice("Pick a space first.");
           return;
         }
@@ -222,7 +235,7 @@ export class SetupWizardModal extends Modal {
     }
 
     try {
-      await this.savePartial();
+      await this.persistConnectionFields();
       const node = await this.plugin.lark.getNode(parsed.nodeToken);
       if (!node || !node.space_id || !node.node_token) {
         this.urlStatus = {
@@ -233,8 +246,8 @@ export class SetupWizardModal extends Modal {
         return;
       }
 
-      this.draft.wikiSpaceId = node.space_id;
-      this.draft.wikiRootNode = node.node_token;
+      this.draft.spaceId = node.space_id;
+      this.draft.rootNode = node.node_token;
 
       if (this.spaces.length === 0) {
         try {
@@ -243,8 +256,9 @@ export class SetupWizardModal extends Modal {
           /* non-fatal: we still have the space_id */
         }
       }
-      const spaceName = this.spaces.find((s) => s.space_id === node.space_id)?.name ?? node.space_id;
-      this.draft.wikiSpaceName = spaceName;
+      const spaceName =
+        this.spaces.find((s) => s.space_id === node.space_id)?.name ?? node.space_id;
+      this.draft.spaceName = spaceName;
 
       this.urlStatus = {
         kind: "ok",
@@ -272,8 +286,8 @@ export class SetupWizardModal extends Modal {
       .addText((t) =>
         t
           .setPlaceholder("wikcn... (paste from a wiki URL if needed)")
-          .setValue(this.draft.wikiRootNode)
-          .onChange((v) => (this.draft.wikiRootNode = v.trim())),
+          .setValue(this.draft.rootNode)
+          .onChange((v) => (this.draft.rootNode = v.trim())),
       );
 
     this.addNavButtons({
@@ -286,7 +300,7 @@ export class SetupWizardModal extends Modal {
     new Setting(this.contentEl)
       .setName("Local folder (vault-relative)")
       .setDesc(
-        "Parent folder for all synced wiki spaces. Each space will land in its own subfolder under this.",
+        "Parent folder for ALL synced wiki spaces. Each space lands in its own subfolder under this.",
       )
       .addText((t) =>
         t
@@ -295,9 +309,9 @@ export class SetupWizardModal extends Modal {
           .onChange((v) => (this.draft.localRoot = v.trim())),
       );
 
-    if (this.draft.wikiSpaceName) {
+    if (this.draft.spaceName) {
       this.contentEl.createEl("p", {
-        text: `Files will land at: ${this.draft.localRoot}/${this.draft.wikiSpaceName}/...`,
+        text: `This space's files will land at: ${this.draft.localRoot}/${this.draft.spaceName}/...`,
         cls: "setting-item-description",
       });
     }
@@ -309,26 +323,26 @@ export class SetupWizardModal extends Modal {
   }
 
   private renderConfirm() {
-    const spaceLabel = this.draft.wikiSpaceName
-      ? `${this.draft.wikiSpaceName} (${this.draft.wikiSpaceId})`
-      : this.draft.wikiSpaceId;
-    const effectivePath = this.draft.wikiSpaceName
-      ? `${this.draft.localRoot}/${this.draft.wikiSpaceName}`
+    const spaceLabel = this.draft.spaceName
+      ? `${this.draft.spaceName} (${this.draft.spaceId})`
+      : this.draft.spaceId;
+    const effectivePath = this.draft.spaceName
+      ? `${this.draft.localRoot}/${this.draft.spaceName}`
       : this.draft.localRoot;
 
     const list = this.contentEl.createEl("ul");
     list.createEl("li", { text: `lark-cli: ${this.draft.larkCliPath || "(PATH)"}` });
     list.createEl("li", { text: `Space: ${spaceLabel}` });
-    list.createEl("li", { text: `Root node: ${this.draft.wikiRootNode || "(whole space)"}` });
+    list.createEl("li", { text: `Root node: ${this.draft.rootNode || "(whole space)"}` });
     list.createEl("li", { text: `Will sync to: ${effectivePath}/` });
 
     this.addNavButtons({
       back: () => (this.step = "local"),
       finish: async () => {
-        await this.savePartial();
-        this.plugin.settings.configured = true;
-        await this.plugin.saveSettings();
-        new Notice("Lark Wiki Sync configured. Click the ribbon icon to sync.");
+        await this.commitNewSpace();
+        new Notice(
+          `Lark Wiki Sync — added ${this.draft.spaceName || this.draft.spaceId}. Click the ribbon icon to sync.`,
+        );
         this.close();
       },
     });
@@ -336,12 +350,36 @@ export class SetupWizardModal extends Modal {
 
   // ---- Helpers -------------------------------------------------------------
 
-  private async savePartial() {
+  /**
+   * Saves connection-level fields (lark-cli path, local root) so subsequent
+   * lark-cli calls inside the wizard pick them up. Does NOT touch spaces[].
+   */
+  private async persistConnectionFields() {
     this.plugin.settings.larkCliPath = this.draft.larkCliPath;
-    this.plugin.settings.wikiSpaceId = this.draft.wikiSpaceId;
-    this.plugin.settings.wikiSpaceName = this.draft.wikiSpaceName;
-    this.plugin.settings.wikiRootNode = this.draft.wikiRootNode;
     this.plugin.settings.localRoot = this.draft.localRoot;
+    await this.plugin.saveSettings();
+  }
+
+  /** Append the freshly-configured space to settings.spaces[] and save. */
+  private async commitNewSpace() {
+    if (!this.draft.spaceId) {
+      new Notice("Cannot save: no space selected.");
+      return;
+    }
+    await this.persistConnectionFields();
+
+    const dup = this.plugin.settings.spaces.findIndex((s) => s.spaceId === this.draft.spaceId);
+    const entry = {
+      spaceId: this.draft.spaceId,
+      spaceName: this.draft.spaceName,
+      rootNode: this.draft.rootNode,
+    };
+    if (dup >= 0) {
+      this.plugin.settings.spaces[dup] = entry; // overwrite (re-add of same space updates rootNode)
+    } else {
+      this.plugin.settings.spaces.push(entry);
+    }
+    this.plugin.settings.configured = true;
     await this.plugin.saveSettings();
   }
 

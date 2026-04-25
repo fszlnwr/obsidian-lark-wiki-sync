@@ -1,5 +1,5 @@
 import { App, FileSystemAdapter, normalizePath, TFile } from "obsidian";
-import type { LarkWikiSyncSettings } from "../settings";
+import type { LarkWikiSyncSettings, WikiSpaceConfig } from "../settings";
 import type { LarkCli } from "../lark/LarkCli";
 import type { StateStore, FileSyncState } from "../state/StateStore";
 import { hashString } from "../util/hash";
@@ -19,24 +19,19 @@ export interface SyncOptions {
 }
 
 /**
- * SyncEngine orchestrates the actual pull/push/merge logic.
+ * SyncEngine orchestrates pull/push/merge across one or more wiki spaces.
  *
- * High-level algorithm (v0.1 pull-only):
- *
- *   1. List wiki nodes under the configured root.
- *   2. For each node that maps to a doc:
- *      a. Fetch remote markdown + compute remoteHash.
+ * Per space:
+ *   1. Walk the node tree (paginated, recursive).
+ *   2. For each docx node:
+ *      a. Fetch raw Lark markdown, download referenced images, transform to
+ *         Obsidian-flavoured markdown, compute remoteHash.
  *      b. Look up FileSyncState for the corresponding local path.
- *      c. If no state: this is a new pull — write file + record hash.
- *      d. If state exists:
- *         - localHash == lastSyncedHash && remoteHash != lastSyncedHash → remote-only change → pull.
- *         - localHash != lastSyncedHash && remoteHash == lastSyncedHash → local-only change → push.
- *         - both changed → conflict (apply conflict policy).
- *         - neither changed → skip.
- *   3. Handle deletions (node removed on Lark, file removed in vault) in later versions.
+ *      c. Classify against the lastSyncedHash (3-way diff) and apply the
+ *         appropriate action.
  *
- * For v0.0.1 this file contains the scaffold + pull path only.
- * Push + conflict resolution are stubbed and should be filled in next.
+ * Spaces are processed independently — a failure in one space does not stop
+ * the others; the error is logged and counted, then we move on.
  */
 export class SyncEngine {
   constructor(
@@ -49,29 +44,56 @@ export class SyncEngine {
   async run(opts: SyncOptions = {}): Promise<SyncResult> {
     const result: SyncResult = { pulled: 0, pushed: 0, conflicts: 0, skipped: 0 };
 
-    if (!this.settings.wikiSpaceId) {
-      throw new Error("No Wiki space configured. Run the setup wizard.");
+    const spaces = this.settings.spaces ?? [];
+    if (spaces.length === 0) {
+      throw new Error("No wiki spaces configured. Open settings to add one.");
     }
 
+    for (const space of spaces) {
+      try {
+        const partial = await this.syncOneSpace(space, opts);
+        result.pulled += partial.pulled;
+        result.pushed += partial.pushed;
+        result.conflicts += partial.conflicts;
+        result.skipped += partial.skipped;
+      } catch (err) {
+        console.error(
+          `LarkWikiSync: space "${space.spaceName || space.spaceId}" failed:`,
+          err,
+        );
+        // surface to user, but keep going for the remaining spaces
+        result.conflicts++; // bookkeeping bucket; "errors" would be a 5th field
+      }
+    }
+
+    if (!opts.dryRun) {
+      this.settings.lastSyncedAt = new Date().toISOString();
+      await this.state.save();
+    }
+
+    return result;
+  }
+
+  private async syncOneSpace(
+    space: WikiSpaceConfig,
+    opts: SyncOptions,
+  ): Promise<SyncResult> {
+    const result: SyncResult = { pulled: 0, pushed: 0, conflicts: 0, skipped: 0 };
+
     const nodes = await this.lark.listAllDescendants(
-      this.settings.wikiSpaceId,
-      this.settings.wikiRootNode || undefined,
+      space.spaceId,
+      space.rootNode || undefined,
     );
 
-    // Effective root nests each space under its own subfolder so multiple
-    // synced spaces stay self-contained.
-    const effectiveRoot = this.effectiveRoot();
-
-    // Pre-scan the attachments folder once so repeat syncs don't re-download
-    // already-cached images.
+    const effectiveRoot = this.effectiveRoot(space);
     const attachmentsRel = `${effectiveRoot}/${ATTACHMENTS_SUBFOLDER}`;
-    const attachmentsAbs = this.resolveAttachmentsAbsolutePath();
+    const attachmentsAbs = this.resolveAttachmentsAbsolutePath(space);
     const existingAttachments = await this.scanAttachmentsCache(attachmentsRel);
 
     for (const node of nodes) {
-      if (node.obj_type !== "docx") continue; // v0.1 only handles docx nodes
+      if (node.obj_type !== "docx") continue;
 
-      const localPath = this.mapNodeToLocalPath(node);
+      const localPath = this.mapNodeToLocalPath(space, node);
       const existing = this.state.get(localPath);
 
       try {
@@ -90,9 +112,7 @@ export class SyncEngine {
           localFile instanceof TFile ? await this.app.vault.read(localFile) : null;
         const localHash = localMd ? hashString(localMd) : null;
 
-        // Classify the 4 cases
         if (!existing && !localFile) {
-          // brand new pull
           if (!opts.dryRun) {
             await this.writeLocal(localPath, remoteMd);
             this.recordSync(localPath, node.node_token, node.obj_token, remoteHash);
@@ -102,7 +122,6 @@ export class SyncEngine {
         }
 
         if (!existing && localFile) {
-          // local exists but never tracked — treat as conflict
           result.conflicts++;
           console.warn(
             `LarkWikiSync: untracked local file collides with remote node: ${localPath}`,
@@ -129,7 +148,6 @@ export class SyncEngine {
         }
 
         if (!remoteChanged && localChanged) {
-          // push path (stub for v0.0.1)
           if (this.settings.direction === "pull") {
             result.skipped++;
             continue;
@@ -142,7 +160,6 @@ export class SyncEngine {
           continue;
         }
 
-        // Both changed → conflict
         result.conflicts++;
         if (!opts.dryRun) {
           await this.handleConflict(localPath, node, localMd!, remoteMd, existing!);
@@ -152,43 +169,55 @@ export class SyncEngine {
       }
     }
 
-    if (!opts.dryRun) {
-      this.settings.lastSyncedAt = new Date().toISOString();
-      await this.state.save();
-    }
-
     return result;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Per-space path helpers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Vault-relative root for the given space, e.g. `📥 Lark/Nexus Wiki`.
+   * Falls back to just `localRoot` if the space name isn't set yet
+   * (legacy migration path).
+   */
+  private effectiveRoot(space: WikiSpaceConfig): string {
+    const sanitize = (s: string) => s.replace(/[\\/:*?"<>|]/g, "_");
+    const parts = [this.settings.localRoot];
+    if (space.spaceName) parts.push(sanitize(space.spaceName));
+    return parts.join("/");
+  }
+
+  private resolveAttachmentsAbsolutePath(space: WikiSpaceConfig): string {
+    const adapter = this.app.vault.adapter;
+    if (!(adapter instanceof FileSystemAdapter)) {
+      throw new Error("Lark Wiki Sync requires Obsidian desktop (FileSystemAdapter).");
+    }
+    return `${adapter.getBasePath()}/${this.effectiveRoot(space)}/${ATTACHMENTS_SUBFOLDER}`;
+  }
+
+  private mapNodeToLocalPath(
+    space: WikiSpaceConfig,
+    node: {
+      title: string;
+      node_token: string;
+      obj_type: string;
+      parentPath?: string[];
+    },
+  ): string {
+    const sanitize = (s: string) => s.replace(/[\\/:*?"<>|]/g, "_");
+    const segments = [
+      this.effectiveRoot(space),
+      ...(node.parentPath ?? []).map(sanitize),
+      `${sanitize(node.title)}.md`,
+    ];
+    return normalizePath(segments.join("/"));
   }
 
   // ---------------------------------------------------------------------------
   // Attachments
   // ---------------------------------------------------------------------------
 
-  /**
-   * Vault-relative root for the currently configured space, e.g.
-   * `📥 Lark/Nexus Wiki`. Falls back to just `localRoot` if the space name
-   * isn't set yet (upgrade path for pre-0.0.9 configs).
-   */
-  private effectiveRoot(): string {
-    const sanitize = (s: string) => s.replace(/[\\/:*?"<>|]/g, "_");
-    const parts = [this.settings.localRoot];
-    if (this.settings.wikiSpaceName) parts.push(sanitize(this.settings.wikiSpaceName));
-    return parts.join("/");
-  }
-
-  private resolveAttachmentsAbsolutePath(): string {
-    const adapter = this.app.vault.adapter;
-    if (!(adapter instanceof FileSystemAdapter)) {
-      throw new Error("Lark Wiki Sync requires Obsidian desktop (FileSystemAdapter).");
-    }
-    return `${adapter.getBasePath()}/${this.effectiveRoot()}/${ATTACHMENTS_SUBFOLDER}`;
-  }
-
-  /**
-   * Read the attachments folder once per sync and build a `token → filename`
-   * cache so we don't re-download files we already have. Filenames on disk
-   * are `<token>.<ext>` (the token is always the prefix before the dot).
-   */
   private async scanAttachmentsCache(relFolder: string): Promise<Record<string, string>> {
     const cache: Record<string, string> = {};
     const adapter = this.app.vault.adapter;
@@ -231,8 +260,6 @@ export class SyncEngine {
         const filename = await this.lark.downloadMedia(token, absFolder);
         if (filename) {
           cache[token] = filename;
-          // Obsidian wikilinks resolve by filename globally, so we don't need
-          // the _attachments/ prefix here — tokens are unique across the vault.
           map[token] = filename;
         }
       } catch (err) {
@@ -243,23 +270,8 @@ export class SyncEngine {
   }
 
   // ---------------------------------------------------------------------------
-  // Helpers
+  // Vault I/O
   // ---------------------------------------------------------------------------
-
-  private mapNodeToLocalPath(node: {
-    title: string;
-    node_token: string;
-    obj_type: string;
-    parentPath?: string[];
-  }): string {
-    const sanitize = (s: string) => s.replace(/[\\/:*?"<>|]/g, "_");
-    const segments = [
-      this.effectiveRoot(),
-      ...(node.parentPath ?? []).map(sanitize),
-      `${sanitize(node.title)}.md`,
-    ];
-    return normalizePath(segments.join("/"));
-  }
 
   private async writeLocal(path: string, content: string): Promise<void> {
     const folder = path.substring(0, path.lastIndexOf("/"));
@@ -281,7 +293,6 @@ export class SyncEngine {
         try {
           await this.app.vault.createFolder(cur);
         } catch (err) {
-          // race: another op may have created it in parallel; re-check
           if (!(await this.app.vault.adapter.exists(cur))) throw err;
         }
       }
@@ -309,9 +320,8 @@ export class SyncEngine {
     node: { node_token: string; obj_token: string; title: string },
     localMd: string,
     remoteMd: string,
-    prev: FileSyncState,
+    _prev: FileSyncState,
   ): Promise<void> {
-    // v0.1 policy implementations
     switch (this.settings.conflictPolicy) {
       case "prefer-local": {
         await this.lark.updateDoc(node.obj_token, localMd, "replace_all");
@@ -325,8 +335,8 @@ export class SyncEngine {
       }
       case "ask":
       default: {
-        // TODO: open a three-way diff modal. For now, write a .conflict marker file
-        // so user doesn't lose either side.
+        // TODO(v0.3): open a three-way diff modal. For now, write a sidecar
+        // so neither side is destroyed.
         const conflictPath = `${localPath}.remote.conflict.md`;
         await this.writeLocal(conflictPath, remoteMd);
         console.warn(

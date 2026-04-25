@@ -4,8 +4,19 @@ import { SetupWizardModal } from "./ui/SetupWizardModal";
 
 export type SyncDirection = "pull" | "push" | "bidirectional";
 
+export interface WikiSpaceConfig {
+  /** Lark Wiki space ID. */
+  spaceId: string;
+
+  /** Human-readable space name; used as the first subfolder under localRoot. */
+  spaceName: string;
+
+  /** Optional node token to scope the sync. Empty = whole space. */
+  rootNode: string;
+}
+
 export interface LarkWikiSyncSettings {
-  /** Has the user completed the setup wizard? */
+  /** Has the user added at least one wiki space? */
   configured: boolean;
 
   /** Path to lark-cli binary (resolved from PATH if blank). */
@@ -14,18 +25,10 @@ export interface LarkWikiSyncSettings {
   /** Identity used for lark-cli: "user" (default) | "bot". */
   larkIdentity: "user" | "bot";
 
-  /** Lark Wiki space ID to sync with. */
-  wikiSpaceId: string;
+  /** Wiki spaces to sync. Each one lives under `${localRoot}/${spaceName}/...`. */
+  spaces: WikiSpaceConfig[];
 
-  /** Human-readable space name — used as the first subfolder under localRoot
-   * so each synced space gets its own self-contained folder. */
-  wikiSpaceName: string;
-
-  /** Optional: node token inside the space to scope the sync root. Empty = whole space. */
-  wikiRootNode: string;
-
-  /** Local folder (vault-relative) — parent for all synced wiki spaces.
-   * Files land in `${localRoot}/${wikiSpaceName}/...`. */
+  /** Local folder (vault-relative) — parent for all synced wiki spaces. */
   localRoot: string;
 
   /** Sync direction. */
@@ -48,9 +51,7 @@ export const DEFAULT_SETTINGS: LarkWikiSyncSettings = {
   configured: false,
   larkCliPath: "",
   larkIdentity: "user",
-  wikiSpaceId: "",
-  wikiSpaceName: "",
-  wikiRootNode: "",
+  spaces: [],
   localRoot: "📥 Lark",
   direction: "bidirectional",
   ignorePatterns: [".obsidian/**", "**/.DS_Store", "**/node_modules/**"],
@@ -75,16 +76,48 @@ export class LarkWikiSyncSettingTab extends PluginSettingTab {
 
     containerEl.createEl("p", {
       text:
-        "Two-way sync between this vault and a Lark Wiki space. Uses lark-cli as the transport layer. " +
-        "Run the setup wizard first to authorize and pick your space/root.",
+        "Two-way sync between this vault and one or more Lark Wiki spaces. " +
+        "Add spaces below — each lives in its own subfolder under the local root.",
     });
 
+    new Setting(containerEl).setName("Wiki spaces").setHeading();
+
+    if (this.plugin.settings.spaces.length === 0) {
+      containerEl.createEl("p", {
+        text: "No spaces configured yet. Click \"Add a wiki space\" to get started.",
+        cls: "setting-item-description",
+      });
+    } else {
+      for (let i = 0; i < this.plugin.settings.spaces.length; i++) {
+        const space = this.plugin.settings.spaces[i];
+        const summary = space.rootNode
+          ? `${space.spaceName || space.spaceId} — root node ${space.rootNode}`
+          : `${space.spaceName || space.spaceId} — whole space`;
+        new Setting(containerEl)
+          .setName(summary)
+          .setDesc(`Local: ${this.plugin.settings.localRoot}/${space.spaceName || space.spaceId}/`)
+          .addButton((btn) =>
+            btn
+              .setButtonText("Remove")
+              .setWarning()
+              .onClick(async () => {
+                this.plugin.settings.spaces.splice(i, 1);
+                if (this.plugin.settings.spaces.length === 0) {
+                  this.plugin.settings.configured = false;
+                }
+                await this.plugin.saveSettings();
+                this.display();
+              }),
+          );
+      }
+    }
+
     new Setting(containerEl)
-      .setName("Setup wizard")
-      .setDesc("Authorize lark-cli, pick a Wiki space + root node, configure local root folder.")
+      .setName("Add a wiki space")
+      .setDesc("Authorize lark-cli, pick a space, choose an optional root node.")
       .addButton((btn) =>
         btn
-          .setButtonText(this.plugin.settings.configured ? "Re-run wizard" : "Run setup wizard")
+          .setButtonText(this.plugin.settings.spaces.length === 0 ? "Run setup wizard" : "Add")
           .setCta()
           .onClick(() => new SetupWizardModal(this.app, this.plugin).open()),
       );
@@ -118,32 +151,11 @@ export class LarkWikiSyncSettingTab extends PluginSettingTab {
           }),
       );
 
-    new Setting(containerEl).setName("Sync scope").setHeading();
-
-    new Setting(containerEl)
-      .setName("Wiki space ID")
-      .setDesc("Target Lark Wiki space. Set via the setup wizard.")
-      .addText((t) =>
-        t
-          .setValue(this.plugin.settings.wikiSpaceId)
-          .setDisabled(true),
-      );
-
-    new Setting(containerEl)
-      .setName("Wiki root node (optional)")
-      .setDesc("Scope the sync to a subtree. Leave blank to sync the whole space.")
-      .addText((t) =>
-        t
-          .setValue(this.plugin.settings.wikiRootNode)
-          .onChange(async (v) => {
-            this.plugin.settings.wikiRootNode = v.trim();
-            await this.plugin.saveSettings();
-          }),
-      );
+    new Setting(containerEl).setName("Sync behaviour").setHeading();
 
     new Setting(containerEl)
       .setName("Local root folder")
-      .setDesc("Vault-relative folder that mirrors the wiki.")
+      .setDesc("Vault-relative parent folder for all synced wiki spaces.")
       .addText((t) =>
         t
           .setValue(this.plugin.settings.localRoot)
@@ -204,7 +216,7 @@ export class LarkWikiSyncSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Reset sync state")
-      .setDesc("Clear cached hashes/timestamps. Next sync will treat all files as new.")
+      .setDesc("Clear cached hashes/timestamps for all spaces. Next sync will treat every file as new.")
       .addButton((btn) =>
         btn.setButtonText("Reset").setWarning().onClick(async () => {
           await this.plugin.state.reset();
