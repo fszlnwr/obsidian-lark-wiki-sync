@@ -11,7 +11,8 @@ Sync one or more Lark Wiki spaces into your Obsidian vault. Uses [`lark-cli`](ht
 - **Full-tree pull with pagination.** Walks every descendant up to depth 20, paginates `wiki nodes list` automatically.
 - **Native Obsidian markdown.** Lark-flavoured tags (`<lark-table>`, `<text>`, etc.) get converted to GFM pipe tables and clean markdown.
 - **Inline images.** `<image token="…"/>` references download via `lark-cli docs +media-download` into `_attachments/<token>.<ext>` and embed as `![[<token>.<ext>]]`. Cached across syncs.
-- **3-way diff classification.** Per-file `lastSyncedHash` enables proper conflict detection (skip / pull / push / conflict).
+- **3-way diff classification.** Per-file `lastSyncedHash` enables proper conflict detection (skip / pull / push / conflict / reconcile). Sync state is keyed by Lark `nodeToken`, so it survives any future path-mapping changes.
+- **Push confirmation.** When the engine plans to upload local edits to Lark, a modal lists every file going up so you can cancel before anything is overwritten remotely. Toggle in settings.
 - **One-click sync.** Ribbon icon (Lucide `sync`) and command palette entries.
 
 ## Prerequisites
@@ -82,10 +83,16 @@ For each docx node, compare three hashes:
 |----------------------------------|-----------------------------------|--------|
 | same                             | same                              | skip |
 | same                             | changed                           | pull |
-| changed                          | same                              | push |
+| changed                          | same                              | push (confirmed) |
 | changed                          | changed                           | conflict → apply policy |
 
-`lastSyncedHash` is the common ancestor; the trio enables proper 3-way reasoning. The remote hash is computed AFTER the Lark→Obsidian markdown transform, so re-pulling the same Lark content produces a stable hash.
+Special branches when there is no prior `lastSyncedHash` (first sync of a node, or after a reset):
+
+- Local file absent → **pull** (new download).
+- Local file present, hash matches remote → **reconcile** (silently adopt the existing file as the baseline; no I/O).
+- Local file present, hash differs → **conflict** (real first-sync collision).
+
+`lastSyncedHash` is the common ancestor. The remote hash is computed AFTER the Lark→Obsidian markdown transform, so re-pulling the same Lark content produces a stable hash. State is keyed by `nodeToken`, so renaming `localRoot` or restructuring folders does not orphan it.
 
 ## Settings tab
 
@@ -102,7 +109,8 @@ For each docx node, compare three hashes:
 - [x] v0.0.7 — inline image download (was v0.5 in the original plan)
 - [x] v0.0.9 — per-space subfolder, default root `📥 Lark`
 - [x] v0.0.10 — multi-space configuration
-- [ ] v0.1.0 — push path verified end-to-end + inverse table transform for round-trip
+- [x] v0.0.11 — push path actually fires (state keyed by `nodeToken`, reconcile branch); push confirmation modal
+- [ ] v0.1.0 — inverse Obsidian→Lark transform so files with tables/images round-trip cleanly through push
 - [ ] v0.2.0 — three-way diff conflict modal
 - [ ] v0.3.0 — wikilink ↔ Lark internal link conversion
 - [ ] v0.4.0 — embedded `<sheet>` rendering / link

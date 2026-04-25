@@ -1,6 +1,7 @@
 import { Plugin, Notice } from "obsidian";
 import { LarkWikiSyncSettings, DEFAULT_SETTINGS, LarkWikiSyncSettingTab } from "./src/settings";
 import { SetupWizardModal } from "./src/ui/SetupWizardModal";
+import { confirmPushes } from "./src/ui/PushConfirmModal";
 import { SyncEngine } from "./src/sync/SyncEngine";
 import { LarkCli } from "./src/lark/LarkCli";
 import { StateStore } from "./src/state/StateStore";
@@ -72,11 +73,19 @@ export default class LarkWikiSyncPlugin extends Plugin {
       0,
     );
     try {
-      const result = await this.syncEngine.run({ dryRun });
+      const result = await this.syncEngine.run({
+        dryRun,
+        confirmPushes:
+          !dryRun && this.settings.confirmBeforePush
+            ? (pushes) => confirmPushes(this.app, pushes)
+            : undefined,
+      });
       startNotice.hide();
+      const reconciledNote = result.reconciled > 0 ? `, reconciled ${result.reconciled}` : "";
       new Notice(
         `Lark Wiki Sync ${dryRun ? "(dry run) " : ""}done — ` +
-          `pulled ${result.pulled}, pushed ${result.pushed}, conflicts ${result.conflicts}`,
+          `pulled ${result.pulled}, pushed ${result.pushed}, conflicts ${result.conflicts}` +
+          reconciledNote,
       );
     } catch (err) {
       startNotice.hide();

@@ -1,41 +1,36 @@
 import { App, normalizePath } from "obsidian";
 
 /**
- * Per-file sync state. Used to detect three-way diffs:
+ * Per-file sync state. Used for the 3-way diff classification:
  *
  *   common ancestor = lastSyncedHash
  *   local           = current vault file hash
- *   remote          = current Lark Doc hash
+ *   remote          = current Lark doc hash (after Lark→Obsidian transform)
+ *
+ * Keyed by Lark `nodeToken` so the state survives changes in local path
+ * mapping (e.g. renaming `localRoot`, switching to per-space subfolders).
+ * `localPath` is recorded but only used for cleanup / logging.
  */
 export interface FileSyncState {
-  /** Vault-relative path. */
   localPath: string;
-
-  /** Lark wiki node token. */
   nodeToken: string;
-
-  /** Lark doc token (the actual editable doc the wiki node points to). */
   docToken: string;
-
-  /** Hash of the content at last successful sync. */
   lastSyncedHash: string;
-
-  /** ISO timestamp of last successful sync for this file. */
   lastSyncedAt: string;
 }
 
 export interface StateShape {
-  files: Record<string, FileSyncState>; // keyed by localPath
+  /** Keyed by `nodeToken`. */
+  files: Record<string, FileSyncState>;
+  /** Schema version — bumped each time the key/shape changes. */
+  schemaVersion: number;
 }
 
-const DEFAULT_STATE: StateShape = { files: {} };
+const SCHEMA_VERSION = 2;
+const DEFAULT_STATE: StateShape = { files: {}, schemaVersion: SCHEMA_VERSION };
 
-/**
- * Stores per-file sync metadata in the plugin's data directory.
- * Lives at `.obsidian/plugins/<id>/sync-state.json`.
- */
 export class StateStore {
-  private state: StateShape = DEFAULT_STATE;
+  private state: StateShape = structuredClone(DEFAULT_STATE);
 
   constructor(private app: App, private pluginId: string) {}
 
@@ -51,11 +46,39 @@ export class StateStore {
         return;
       }
       const raw = await adapter.read(this.path);
-      this.state = JSON.parse(raw) as StateShape;
+      const parsed = JSON.parse(raw) as Partial<StateShape> & {
+        files?: Record<string, FileSyncState>;
+      };
+      this.state = this.migrate(parsed);
     } catch (err) {
       console.warn("LarkWikiSync: failed to load sync state, starting fresh.", err);
       this.state = structuredClone(DEFAULT_STATE);
     }
+  }
+
+  /**
+   * Pre-0.0.11 state was keyed by `localPath`. Re-key by `nodeToken` so the
+   * state survives path-mapping changes. Each entry already carries
+   * `nodeToken` inline so this is a pure rekeying — no data is lost.
+   */
+  private migrate(raw: { files?: Record<string, FileSyncState>; schemaVersion?: number }): StateShape {
+    if (raw?.schemaVersion === SCHEMA_VERSION && raw.files) {
+      return { files: raw.files, schemaVersion: SCHEMA_VERSION };
+    }
+    const files: Record<string, FileSyncState> = {};
+    for (const entry of Object.values(raw?.files ?? {})) {
+      if (!entry?.nodeToken) continue; // unsalvageable
+      files[entry.nodeToken] = entry;
+    }
+    const migratedCount = Object.keys(files).length;
+    const droppedCount = Object.keys(raw?.files ?? {}).length - migratedCount;
+    if (droppedCount > 0) {
+      console.warn(
+        `LarkWikiSync: state migration dropped ${droppedCount} unrecognised entries.`,
+      );
+    }
+    console.info(`LarkWikiSync: state migrated to schema v${SCHEMA_VERSION} (${migratedCount} entries).`);
+    return { files, schemaVersion: SCHEMA_VERSION };
   }
 
   async save(): Promise<void> {
@@ -63,16 +86,16 @@ export class StateStore {
     await adapter.write(this.path, JSON.stringify(this.state, null, 2));
   }
 
-  get(localPath: string): FileSyncState | undefined {
-    return this.state.files[localPath];
+  get(nodeToken: string): FileSyncState | undefined {
+    return this.state.files[nodeToken];
   }
 
   upsert(entry: FileSyncState): void {
-    this.state.files[entry.localPath] = entry;
+    this.state.files[entry.nodeToken] = entry;
   }
 
-  remove(localPath: string): void {
-    delete this.state.files[localPath];
+  remove(nodeToken: string): void {
+    delete this.state.files[nodeToken];
   }
 
   all(): FileSyncState[] {

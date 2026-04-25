@@ -12,27 +12,60 @@ export interface SyncResult {
   pushed: number;
   conflicts: number;
   skipped: number;
+  reconciled: number;
 }
 
-export interface SyncOptions {
+/** Items intended for execution after planning. */
+export interface PendingPull {
+  space: WikiSpaceConfig;
+  node: { node_token: string; obj_token: string; title: string };
+  localPath: string;
+  remoteMd: string;
+  remoteHash: string;
+}
+
+export interface PendingPush {
+  space: WikiSpaceConfig;
+  node: { node_token: string; obj_token: string; title: string };
+  localPath: string;
+  localMd: string;
+  localHash: string;
+}
+
+export interface PendingConflict {
+  space: WikiSpaceConfig;
+  node: { node_token: string; obj_token: string; title: string };
+  localPath: string;
+  localMd: string;
+  remoteMd: string;
+  prev: FileSyncState;
+}
+
+/** Reconcile = "we have a local file matching remote exactly but no state — adopt it." */
+export interface PendingReconcile {
+  space: WikiSpaceConfig;
+  node: { node_token: string; obj_token: string };
+  localPath: string;
+  hash: string;
+}
+
+export interface SyncPlan {
+  pulls: PendingPull[];
+  pushes: PendingPush[];
+  conflicts: PendingConflict[];
+  reconciles: PendingReconcile[];
+  skipped: number;
+}
+
+export interface RunOptions {
   dryRun?: boolean;
+  /**
+   * If returned promise resolves false, queued pushes are skipped (the rest of
+   * the plan still applies). If undefined, no confirmation is asked.
+   */
+  confirmPushes?: (pushes: PendingPush[]) => Promise<boolean>;
 }
 
-/**
- * SyncEngine orchestrates pull/push/merge across one or more wiki spaces.
- *
- * Per space:
- *   1. Walk the node tree (paginated, recursive).
- *   2. For each docx node:
- *      a. Fetch raw Lark markdown, download referenced images, transform to
- *         Obsidian-flavoured markdown, compute remoteHash.
- *      b. Look up FileSyncState for the corresponding local path.
- *      c. Classify against the lastSyncedHash (3-way diff) and apply the
- *         appropriate action.
- *
- * Spaces are processed independently — a failure in one space does not stop
- * the others; the error is logged and counted, then we move on.
- */
 export class SyncEngine {
   constructor(
     private app: App,
@@ -41,8 +74,44 @@ export class SyncEngine {
     private state: StateStore,
   ) {}
 
-  async run(opts: SyncOptions = {}): Promise<SyncResult> {
-    const result: SyncResult = { pulled: 0, pushed: 0, conflicts: 0, skipped: 0 };
+  // ---------------------------------------------------------------------------
+  // Top-level entry
+  // ---------------------------------------------------------------------------
+
+  async run(opts: RunOptions = {}): Promise<SyncResult> {
+    const plan = await this.plan();
+
+    if (opts.confirmPushes && plan.pushes.length > 0) {
+      const ok = await opts.confirmPushes(plan.pushes);
+      if (!ok) plan.pushes = [];
+    }
+
+    if (opts.dryRun) {
+      return {
+        pulled: plan.pulls.length,
+        pushed: plan.pushes.length,
+        conflicts: plan.conflicts.length,
+        skipped: plan.skipped,
+        reconciled: plan.reconciles.length,
+      };
+    }
+
+    return this.apply(plan);
+  }
+
+  /**
+   * Walk every configured space, classify every node, and return a plan
+   * without writing anything anywhere. Network reads (list + fetch +
+   * download attachments) DO happen here — only mutations are deferred.
+   */
+  async plan(): Promise<SyncPlan> {
+    const plan: SyncPlan = {
+      pulls: [],
+      pushes: [],
+      conflicts: [],
+      reconciles: [],
+      skipped: 0,
+    };
 
     const spaces = this.settings.spaces ?? [];
     if (spaces.length === 0) {
@@ -51,35 +120,73 @@ export class SyncEngine {
 
     for (const space of spaces) {
       try {
-        const partial = await this.syncOneSpace(space, opts);
-        result.pulled += partial.pulled;
-        result.pushed += partial.pushed;
-        result.conflicts += partial.conflicts;
-        result.skipped += partial.skipped;
+        await this.planOneSpace(space, plan);
       } catch (err) {
         console.error(
-          `LarkWikiSync: space "${space.spaceName || space.spaceId}" failed:`,
+          `LarkWikiSync: planning failed for "${space.spaceName || space.spaceId}":`,
           err,
         );
-        // surface to user, but keep going for the remaining spaces
-        result.conflicts++; // bookkeeping bucket; "errors" would be a 5th field
+        throw err; // bubble up so the user sees a Notice
+      }
+    }
+    return plan;
+  }
+
+  /** Execute a (possibly user-edited) plan. */
+  async apply(plan: SyncPlan): Promise<SyncResult> {
+    const result: SyncResult = {
+      pulled: 0,
+      pushed: 0,
+      conflicts: 0,
+      skipped: plan.skipped,
+      reconciled: 0,
+    };
+
+    for (const r of plan.reconciles) {
+      this.recordSync(r.localPath, r.node.node_token, r.node.obj_token, r.hash);
+      result.reconciled++;
+    }
+
+    for (const p of plan.pulls) {
+      try {
+        await this.writeLocal(p.localPath, p.remoteMd);
+        this.recordSync(p.localPath, p.node.node_token, p.node.obj_token, p.remoteHash);
+        result.pulled++;
+      } catch (err) {
+        console.error(`LarkWikiSync: pull failed for ${p.localPath}:`, err);
       }
     }
 
-    if (!opts.dryRun) {
-      this.settings.lastSyncedAt = new Date().toISOString();
-      await this.state.save();
+    for (const p of plan.pushes) {
+      try {
+        await this.lark.updateDoc(p.node.obj_token, p.localMd, "replace_all");
+        this.recordSync(p.localPath, p.node.node_token, p.node.obj_token, p.localHash);
+        result.pushed++;
+      } catch (err) {
+        console.error(`LarkWikiSync: push failed for ${p.localPath}:`, err);
+      }
     }
+
+    for (const c of plan.conflicts) {
+      try {
+        await this.handleConflict(c);
+        result.conflicts++;
+      } catch (err) {
+        console.error(`LarkWikiSync: conflict handling failed for ${c.localPath}:`, err);
+      }
+    }
+
+    this.settings.lastSyncedAt = new Date().toISOString();
+    await this.state.save();
 
     return result;
   }
 
-  private async syncOneSpace(
-    space: WikiSpaceConfig,
-    opts: SyncOptions,
-  ): Promise<SyncResult> {
-    const result: SyncResult = { pulled: 0, pushed: 0, conflicts: 0, skipped: 0 };
+  // ---------------------------------------------------------------------------
+  // Planning
+  // ---------------------------------------------------------------------------
 
+  private async planOneSpace(space: WikiSpaceConfig, plan: SyncPlan): Promise<void> {
     const nodes = await this.lark.listAllDescendants(
       space.spaceId,
       space.rootNode || undefined,
@@ -94,7 +201,7 @@ export class SyncEngine {
       if (node.obj_type !== "docx") continue;
 
       const localPath = this.mapNodeToLocalPath(space, node);
-      const existing = this.state.get(localPath);
+      const existing = this.state.get(node.node_token);
 
       try {
         const rawMd = await this.lark.fetchDoc(node.obj_token);
@@ -112,75 +219,88 @@ export class SyncEngine {
           localFile instanceof TFile ? await this.app.vault.read(localFile) : null;
         const localHash = localMd ? hashString(localMd) : null;
 
-        if (!existing && !localFile) {
-          if (!opts.dryRun) {
-            await this.writeLocal(localPath, remoteMd);
-            this.recordSync(localPath, node.node_token, node.obj_token, remoteHash);
+        // No prior state — this is a first-sync discovery for this node.
+        if (!existing) {
+          if (!localFile) {
+            // New pull.
+            plan.pulls.push({ space, node, localPath, remoteMd, remoteHash });
+            continue;
           }
-          result.pulled++;
+          if (localHash === remoteHash) {
+            // Local file matches remote exactly: silently adopt it.
+            plan.reconciles.push({
+              space,
+              node: { node_token: node.node_token, obj_token: node.obj_token },
+              localPath,
+              hash: remoteHash,
+            });
+            continue;
+          }
+          // Local file exists with different content — genuine collision.
+          plan.conflicts.push({
+            space,
+            node,
+            localPath,
+            localMd: localMd!,
+            remoteMd,
+            prev: {
+              localPath,
+              nodeToken: node.node_token,
+              docToken: node.obj_token,
+              lastSyncedHash: "",
+              lastSyncedAt: "",
+            },
+          });
           continue;
         }
 
-        if (!existing && localFile) {
-          result.conflicts++;
-          console.warn(
-            `LarkWikiSync: untracked local file collides with remote node: ${localPath}`,
-          );
-          continue;
-        }
-
-        const base = existing!.lastSyncedHash;
+        const base = existing.lastSyncedHash;
         const localChanged = localHash !== null && localHash !== base;
         const remoteChanged = remoteHash !== base;
 
         if (!localChanged && !remoteChanged) {
-          result.skipped++;
+          plan.skipped++;
           continue;
         }
 
         if (remoteChanged && !localChanged) {
-          if (!opts.dryRun) {
-            await this.writeLocal(localPath, remoteMd);
-            this.recordSync(localPath, node.node_token, node.obj_token, remoteHash);
-          }
-          result.pulled++;
+          plan.pulls.push({ space, node, localPath, remoteMd, remoteHash });
           continue;
         }
 
         if (!remoteChanged && localChanged) {
           if (this.settings.direction === "pull") {
-            result.skipped++;
+            plan.skipped++;
             continue;
           }
-          if (!opts.dryRun) {
-            await this.lark.updateDoc(node.obj_token, localMd!, "replace_all");
-            this.recordSync(localPath, node.node_token, node.obj_token, localHash!);
-          }
-          result.pushed++;
+          plan.pushes.push({
+            space,
+            node,
+            localPath,
+            localMd: localMd!,
+            localHash: localHash!,
+          });
           continue;
         }
 
-        result.conflicts++;
-        if (!opts.dryRun) {
-          await this.handleConflict(localPath, node, localMd!, remoteMd, existing!);
-        }
+        plan.conflicts.push({
+          space,
+          node,
+          localPath,
+          localMd: localMd!,
+          remoteMd,
+          prev: existing,
+        });
       } catch (err) {
-        console.error(`LarkWikiSync: failed on ${localPath}`, err);
+        console.error(`LarkWikiSync: classify failed on ${localPath}`, err);
       }
     }
-
-    return result;
   }
 
   // ---------------------------------------------------------------------------
   // Per-space path helpers
   // ---------------------------------------------------------------------------
 
-  /**
-   * Vault-relative root for the given space, e.g. `📥 Lark/Nexus Wiki`.
-   * Falls back to just `localRoot` if the space name isn't set yet
-   * (legacy migration path).
-   */
   private effectiveRoot(space: WikiSpaceConfig): string {
     const sanitize = (s: string) => s.replace(/[\\/:*?"<>|]/g, "_");
     const parts = [this.settings.localRoot];
@@ -315,32 +435,26 @@ export class SyncEngine {
     this.state.upsert(entry);
   }
 
-  private async handleConflict(
-    localPath: string,
-    node: { node_token: string; obj_token: string; title: string },
-    localMd: string,
-    remoteMd: string,
-    _prev: FileSyncState,
-  ): Promise<void> {
+  private async handleConflict(c: PendingConflict): Promise<void> {
     switch (this.settings.conflictPolicy) {
       case "prefer-local": {
-        await this.lark.updateDoc(node.obj_token, localMd, "replace_all");
-        this.recordSync(localPath, node.node_token, node.obj_token, hashString(localMd));
+        await this.lark.updateDoc(c.node.obj_token, c.localMd, "replace_all");
+        this.recordSync(c.localPath, c.node.node_token, c.node.obj_token, hashString(c.localMd));
         return;
       }
       case "prefer-remote": {
-        await this.writeLocal(localPath, remoteMd);
-        this.recordSync(localPath, node.node_token, node.obj_token, hashString(remoteMd));
+        await this.writeLocal(c.localPath, c.remoteMd);
+        this.recordSync(c.localPath, c.node.node_token, c.node.obj_token, hashString(c.remoteMd));
         return;
       }
       case "ask":
       default: {
-        // TODO(v0.3): open a three-way diff modal. For now, write a sidecar
-        // so neither side is destroyed.
-        const conflictPath = `${localPath}.remote.conflict.md`;
-        await this.writeLocal(conflictPath, remoteMd);
+        // TODO(v0.2): three-way diff modal. Until then, write a sidecar so
+        // neither side is destroyed.
+        const conflictPath = `${c.localPath}.remote.conflict.md`;
+        await this.writeLocal(conflictPath, c.remoteMd);
         console.warn(
-          `LarkWikiSync: conflict on ${localPath}. Remote saved to ${conflictPath}; manual merge required.`,
+          `LarkWikiSync: conflict on ${c.localPath}. Remote saved to ${conflictPath}; manual merge required.`,
         );
         return;
       }

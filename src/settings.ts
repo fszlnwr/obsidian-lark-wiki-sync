@@ -43,6 +43,10 @@ export interface LarkWikiSyncSettings {
   /** Conflict default behavior. */
   conflictPolicy: "ask" | "prefer-local" | "prefer-remote";
 
+  /** When true, sync pauses with a confirmation modal listing local-only
+   * changes before pushing them to Lark. */
+  confirmBeforePush: boolean;
+
   /** Last successful sync (ISO). */
   lastSyncedAt: string | null;
 }
@@ -57,6 +61,7 @@ export const DEFAULT_SETTINGS: LarkWikiSyncSettings = {
   ignorePatterns: [".obsidian/**", "**/.DS_Store", "**/node_modules/**"],
   autoSyncIntervalMinutes: 0,
   conflictPolicy: "ask",
+  confirmBeforePush: true,
   lastSyncedAt: null,
 };
 
@@ -192,6 +197,16 @@ export class LarkWikiSyncSettingTab extends PluginSettingTab {
             this.plugin.settings.conflictPolicy = v as LarkWikiSyncSettings["conflictPolicy"];
             await this.plugin.saveSettings();
           }),
+      );
+
+    new Setting(containerEl)
+      .setName("Confirm before pushing")
+      .setDesc("Pause and list local-only changes before sending them up to Lark.")
+      .addToggle((t) =>
+        t.setValue(this.plugin.settings.confirmBeforePush).onChange(async (v) => {
+          this.plugin.settings.confirmBeforePush = v;
+          await this.plugin.saveSettings();
+        }),
       );
 
     new Setting(containerEl)
