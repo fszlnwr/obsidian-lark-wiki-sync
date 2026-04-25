@@ -112,6 +112,7 @@ Special branches when there is no prior `lastSyncedHash` (first sync of a node, 
 - [x] v0.0.10 — multi-space configuration
 - [x] v0.0.11 — push path actually fires (state keyed by `nodeToken`, reconcile branch); push confirmation modal
 - [x] v0.0.12 — per-action error surfacing (results modal lists every failure with the real lark-cli message)
+- [x] v0.0.13 — push uses `--mode overwrite` (lark-cli's `replace_all` mode is selection-scoped despite the name)
 - [ ] v0.1.0 — inverse Obsidian→Lark transform so files with tables/images round-trip cleanly through push
 - [ ] v0.2.0 — three-way diff conflict modal
 - [ ] v0.3.0 — wikilink ↔ Lark internal link conversion

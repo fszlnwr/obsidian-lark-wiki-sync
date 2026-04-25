@@ -170,7 +170,7 @@ export class SyncEngine {
 
     for (const p of plan.pushes) {
       try {
-        await this.lark.updateDoc(p.node.obj_token, p.localMd, "replace_all");
+        await this.lark.updateDoc(p.node.obj_token, p.localMd, "overwrite");
         this.recordSync(p.localPath, p.node.node_token, p.node.obj_token, p.localHash);
         result.pushed++;
       } catch (err) {
@@ -453,7 +453,7 @@ export class SyncEngine {
   private async handleConflict(c: PendingConflict): Promise<void> {
     switch (this.settings.conflictPolicy) {
       case "prefer-local": {
-        await this.lark.updateDoc(c.node.obj_token, c.localMd, "replace_all");
+        await this.lark.updateDoc(c.node.obj_token, c.localMd, "overwrite");
         this.recordSync(c.localPath, c.node.node_token, c.node.obj_token, hashString(c.localMd));
         return;
       }

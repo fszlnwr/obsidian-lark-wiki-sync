@@ -184,8 +184,12 @@ export class LarkCli {
   async updateDoc(
     docToken: string,
     markdown: string,
-    mode: "overwrite" | "append" | "replace_all" = "replace_all",
+    mode: "overwrite" | "append" = "overwrite",
   ) {
+    // Note: lark-cli's `replace_all` mode is selection-scoped (despite the
+    // name) and refuses to run without --selection-by-title /
+    // --selection-with-ellipsis. `overwrite` is the one that replaces the
+    // entire document body with the supplied markdown.
     const args = ["docs", "+update", "--doc", docToken, "--mode", mode, "--markdown", "-"];
     const r = await this.run(args, { stdin: markdown });
     return r?.data ?? null;
