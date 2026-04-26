@@ -14,6 +14,7 @@ Sync one or more Lark Wiki spaces into your Obsidian vault. Uses [`lark-cli`](ht
 - **3-way diff classification.** Per-file `lastSyncedHash` enables proper conflict detection (skip / pull / push / conflict / reconcile). Sync state is keyed by Lark `nodeToken`, so it survives any future path-mapping changes.
 - **Push confirmation.** When the engine plans to upload local edits to Lark, a modal lists every file going up so you can cancel before anything is overwritten remotely. Toggle in settings.
 - **Per-file error visibility.** If any pull/push/conflict step fails (missing scope, rate limit, malformed content), a results modal pops up after sync listing every failure with the actual `lark-cli` error message, so you don't have to spelunk through the dev console.
+- **Lossless push round-trip.** Pipe tables you edit locally are rewritten as `<lark-table>` and pulled image embeds (`![[<token>.<ext>]]`) become `<image token="..."/>` before they hit Lark's update API, so structure survives the round trip. Image embeds whose target is *not* a known Lark token are left alone (newly-pasted local images aren't yet uploaded — that's a future item).
 - **One-click sync.** Ribbon icon (Lucide `sync`) and command palette entries.
 
 ## Prerequisites
@@ -55,7 +56,8 @@ src/sync/SyncEngine.ts           Per-space pull/push/conflict orchestration
 src/state/StateStore.ts          Per-file hash + last-sync timestamps
 src/util/hash.ts                 SHA-1 helper
 src/util/parseWikiUrl.ts         Lark URL → node_token parser
-src/util/larkToObsidianMd.ts     Lark-flavoured MD → Obsidian MD converter
+src/util/larkToObsidianMd.ts     Lark-flavoured MD → Obsidian MD converter (pull)
+src/util/obsidianToLarkMd.ts     Obsidian MD → Lark-flavoured MD converter (push)
 ```
 
 ### File layout in your vault
@@ -113,7 +115,7 @@ Special branches when there is no prior `lastSyncedHash` (first sync of a node, 
 - [x] v0.0.11 — push path actually fires (state keyed by `nodeToken`, reconcile branch); push confirmation modal
 - [x] v0.0.12 — per-action error surfacing (results modal lists every failure with the real lark-cli message)
 - [x] v0.0.13 — push uses `--mode overwrite` (lark-cli's `replace_all` mode is selection-scoped despite the name)
-- [ ] v0.1.0 — inverse Obsidian→Lark transform so files with tables/images round-trip cleanly through push
+- [x] v0.1.0 — inverse Obsidian→Lark transform: pipe tables → `<lark-table>`, `![[<token>.<ext>]]` → `<image token="..."/>` on push
 - [ ] v0.2.0 — three-way diff conflict modal
 - [ ] v0.3.0 — wikilink ↔ Lark internal link conversion
 - [ ] v0.4.0 — embedded `<sheet>` rendering / link

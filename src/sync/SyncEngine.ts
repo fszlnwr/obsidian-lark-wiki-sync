@@ -4,6 +4,7 @@ import type { LarkCli } from "../lark/LarkCli";
 import type { StateStore, FileSyncState } from "../state/StateStore";
 import { hashString } from "../util/hash";
 import { extractImageTokens, larkToObsidianMarkdown } from "../util/larkToObsidianMd";
+import { obsidianToLarkMarkdown } from "../util/obsidianToLarkMd";
 
 const ATTACHMENTS_SUBFOLDER = "_attachments";
 
@@ -35,7 +36,10 @@ export interface PendingPush {
   space: WikiSpaceConfig;
   node: { node_token: string; obj_token: string; title: string };
   localPath: string;
+  /** Markdown as it lives in the vault (Obsidian-form). Hashed for state. */
   localMd: string;
+  /** Markdown rewritten to Lark-flavor (pipe tables → <lark-table>, etc.). Sent to lark-cli. */
+  pushMd: string;
   localHash: string;
 }
 
@@ -170,7 +174,9 @@ export class SyncEngine {
 
     for (const p of plan.pushes) {
       try {
-        await this.lark.updateDoc(p.node.obj_token, p.localMd, "overwrite");
+        await this.lark.updateDoc(p.node.obj_token, p.pushMd, "overwrite");
+        // Hash the obsidian-form, not the lark-form — that's what the next
+        // pull will see after we re-transform Lark's stored content.
         this.recordSync(p.localPath, p.node.node_token, p.node.obj_token, p.localHash);
         result.pushed++;
       } catch (err) {
@@ -288,11 +294,16 @@ export class SyncEngine {
             plan.skipped++;
             continue;
           }
+          const knownImages = new Set(Object.values(existingAttachments));
+          const pushMd = obsidianToLarkMarkdown(localMd!, {
+            knownImageFilenames: knownImages,
+          });
           plan.pushes.push({
             space,
             node,
             localPath,
             localMd: localMd!,
+            pushMd,
             localHash: localHash!,
           });
           continue;
@@ -453,7 +464,10 @@ export class SyncEngine {
   private async handleConflict(c: PendingConflict): Promise<void> {
     switch (this.settings.conflictPolicy) {
       case "prefer-local": {
-        await this.lark.updateDoc(c.node.obj_token, c.localMd, "overwrite");
+        // No attachments cache here; pass an empty set so only token-shaped
+        // image embeds are rewritten.
+        const pushMd = obsidianToLarkMarkdown(c.localMd, { knownImageFilenames: new Set() });
+        await this.lark.updateDoc(c.node.obj_token, pushMd, "overwrite");
         this.recordSync(c.localPath, c.node.node_token, c.node.obj_token, hashString(c.localMd));
         return;
       }
