@@ -44,6 +44,8 @@ export interface PendingPush {
   localHash: string;
 }
 
+export type ConflictResolution = "keep-local" | "keep-remote" | "sidecar";
+
 export interface PendingConflict {
   space: WikiSpaceConfig;
   node: { node_token: string; obj_token: string; title: string };
@@ -51,6 +53,9 @@ export interface PendingConflict {
   localMd: string;
   remoteMd: string;
   prev: FileSyncState;
+  /** Per-conflict override set by the resolve modal. Falls back to the
+   * global `conflictPolicy` setting when absent. */
+  resolution?: ConflictResolution;
 }
 
 /** Reconcile = "we have a local file matching remote exactly but no state — adopt it." */
@@ -93,6 +98,15 @@ export interface RunOptions {
    * If undefined, behaviour is "applyAll".
    */
   confirmPlan?: (plan: SyncPlan) => Promise<PlanDecision>;
+  /**
+   * Called once between the plan modal and apply, only if `conflictPolicy`
+   * is "ask" and there is at least one conflict. Returns per-conflict
+   * resolutions keyed by `nodeToken`. Conflicts not present in the returned
+   * map fall back to the sidecar default.
+   */
+  resolveConflicts?: (
+    conflicts: PendingConflict[],
+  ) => Promise<Record<string, ConflictResolution>>;
   /** Called as the engine progresses through phases. Best-effort, not exact. */
   onProgress?: (e: ProgressEvent) => void;
   /** Limit sync to a single space (matched by spaceId). */
@@ -121,6 +135,18 @@ export class SyncEngine {
       }
       if (decision === "pullsOnly") {
         plan.pushes = [];
+      }
+    }
+
+    if (
+      opts.resolveConflicts &&
+      this.settings.conflictPolicy === "ask" &&
+      plan.conflicts.length > 0
+    ) {
+      const resolutions = await opts.resolveConflicts(plan.conflicts);
+      for (const c of plan.conflicts) {
+        const r = resolutions[c.node.node_token];
+        if (r) c.resolution = r;
       }
     }
 
@@ -577,24 +603,21 @@ export class SyncEngine {
   }
 
   private async handleConflict(c: PendingConflict): Promise<void> {
-    switch (this.settings.conflictPolicy) {
-      case "prefer-local": {
-        // No attachments cache here; pass an empty set so only token-shaped
-        // image embeds are rewritten.
+    const action: ConflictResolution = c.resolution ?? this.policyToResolution();
+    switch (action) {
+      case "keep-local": {
         const pushMd = obsidianToLarkMarkdown(c.localMd, { knownImageFilenames: new Set() });
         await this.lark.updateDoc(c.node.obj_token, pushMd, "overwrite");
         this.recordSync(c.localPath, c.node.node_token, c.node.obj_token, hashString(c.localMd));
         return;
       }
-      case "prefer-remote": {
+      case "keep-remote": {
         await this.writeLocal(c.localPath, c.remoteMd);
         this.recordSync(c.localPath, c.node.node_token, c.node.obj_token, hashString(c.remoteMd));
         return;
       }
-      case "ask":
+      case "sidecar":
       default: {
-        // TODO(v0.2): three-way diff modal. Until then, write a sidecar so
-        // neither side is destroyed.
         const conflictPath = `${c.localPath}.remote.conflict.md`;
         await this.writeLocal(conflictPath, c.remoteMd);
         console.warn(
@@ -602,6 +625,17 @@ export class SyncEngine {
         );
         return;
       }
+    }
+  }
+
+  private policyToResolution(): ConflictResolution {
+    switch (this.settings.conflictPolicy) {
+      case "prefer-local":
+        return "keep-local";
+      case "prefer-remote":
+        return "keep-remote";
+      default:
+        return "sidecar";
     }
   }
 }

@@ -17,6 +17,7 @@ Sync one or more Lark Wiki spaces into your Obsidian vault. Uses [`lark-cli`](ht
 - **Live progress notice.** While syncing, the Notice updates in real time: `Lark Wiki Sync — Nexus Wiki: ↓ pulling 12/48 · FRD.md`.
 - **Visual wizard stepper.** Setup wizard now shows a numbered stepper across the top instead of a plain "Step 2 of 6" line. The auth-verify result lands inline under the button (no more modal-then-Notice juggling).
 - **Per-file error visibility.** If any pull/push/conflict step fails (missing scope, rate limit, malformed content), a results modal pops up after sync listing every failure with the actual `lark-cli` error message, so you don't have to spelunk through the dev console.
+- **Conflict resolution modal.** When the conflict policy is "ask" and both sides have changed since last sync, a modal lists every conflicting file with line counts and three radio choices: **Keep local** (push), **Keep remote** (pull), or **Save sidecar** (default; non-destructive). Pick per file, click Apply.
 - **Lossless push round-trip.** Pipe tables you edit locally are rewritten as `<lark-table>` and pulled image embeds (`![[<token>.<ext>]]`) become `<image token="..."/>` before they hit Lark's update API, so structure survives the round trip. Image embeds whose target is *not* a known Lark token are left alone (newly-pasted local images aren't yet uploaded — that's a future item).
 - **Wikilink conversion (pull).** Inter-doc links inside pulled docs (`https://<tenant>.feishu.cn/wiki/<node_token>`) are rewritten to `[[Target Doc]]` Obsidian wikilinks when the destination is already in the sync state. Click → jumps to the synced file; backlinks panel works.
 - **Auto-sync timer.** Set "Auto-sync interval" in settings to run a sync every N minutes. Plan modal still gates the actual changes if "Confirm before sync" is on.
@@ -155,7 +156,7 @@ Special branches when there is no prior `lastSyncedHash` (first sync of a node, 
 - [x] v0.0.15 — UI polish: pre-sync plan modal, per-space status + per-space sync button, live progress notice, wizard stepper
 - [x] v0.0.16 — wikilink conversion on pull: Lark wiki URLs inside docs become `[[Target]]` when the destination is synced
 - [x] v0.0.17 — auto-sync timer + `lark_sync: false` frontmatter flag + glob ignore patterns
-- [ ] v0.2.0 — three-way diff conflict modal
+- [x] v0.0.18 — conflict resolution modal: per-file Keep local / Keep remote / Save sidecar
 - [ ] v0.3.0 — wikilink reverse direction (Obsidian `[[…]]` → Lark URL on push), needs tenant host capture
 - [ ] v0.4.0 — embedded `<sheet>` rendering / link
 - [ ] v1.0.0 — ignore patterns, per-file `lark_sync: false` frontmatter flag, auto-sync timer, polish

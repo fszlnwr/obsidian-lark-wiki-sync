@@ -2,6 +2,7 @@ import { Plugin, Notice } from "obsidian";
 import { LarkWikiSyncSettings, DEFAULT_SETTINGS, LarkWikiSyncSettingTab } from "./src/settings";
 import { SetupWizardModal } from "./src/ui/SetupWizardModal";
 import { presentSyncPlan } from "./src/ui/SyncPlanModal";
+import { resolveConflictsModal } from "./src/ui/ConflictModal";
 import { SyncResultsModal } from "./src/ui/SyncResultsModal";
 import { SyncEngine, ProgressEvent } from "./src/sync/SyncEngine";
 import { LarkCli } from "./src/lark/LarkCli";
@@ -121,6 +122,9 @@ export default class LarkWikiSyncPlugin extends Plugin {
           !dryRun && this.settings.confirmBeforeSync
             ? (plan) => presentSyncPlan(this.app, plan)
             : undefined,
+        resolveConflicts: !dryRun
+          ? (conflicts) => resolveConflictsModal(this.app, conflicts)
+          : undefined,
       });
       progressNotice.hide();
       const reconciledNote = result.reconciled > 0 ? `, reconciled ${result.reconciled}` : "";
