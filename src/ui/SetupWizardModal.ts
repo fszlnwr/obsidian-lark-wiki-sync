@@ -24,6 +24,7 @@ export class SetupWizardModal extends Modal {
   private urlInput = "";
   private urlStatus: { kind: "ok" | "err"; message: string } | null = null;
   private urlResolved = false;
+  private authStatus: { kind: "ok" | "err"; message: string } | null = null;
 
   private draft = {
     larkCliPath: "",
@@ -56,10 +57,7 @@ export class SetupWizardModal extends Modal {
         ? "Lark Wiki Sync — Setup"
         : "Lark Wiki Sync — Add a space";
     contentEl.createEl("h2", { text: heading });
-    contentEl.createEl("p", {
-      text: `Step: ${this.stepLabel()}`,
-      cls: "setting-item-description",
-    });
+    this.renderStepper(contentEl);
 
     switch (this.step) {
       case "intro":
@@ -77,9 +75,24 @@ export class SetupWizardModal extends Modal {
     }
   }
 
-  private stepLabel(): string {
-    const order: WizardStep[] = ["intro", "auth", "space", "root", "local", "confirm"];
-    return `${order.indexOf(this.step) + 1} of ${order.length}`;
+  private renderStepper(parent: HTMLElement): void {
+    const order: Array<{ id: WizardStep; label: string }> = [
+      { id: "intro", label: "Intro" },
+      { id: "auth", label: "Auth" },
+      { id: "space", label: "Space" },
+      { id: "root", label: "Root" },
+      { id: "local", label: "Folder" },
+      { id: "confirm", label: "Confirm" },
+    ];
+    const idx = order.findIndex((s) => s.id === this.step);
+    const stepper = parent.createDiv({ cls: "lark-wiki-sync-stepper" });
+    for (let i = 0; i < order.length; i++) {
+      const { label } = order[i];
+      const stateClass = i < idx ? "is-done" : i === idx ? "is-current" : "is-todo";
+      const item = stepper.createDiv({ cls: `lark-wiki-sync-step ${stateClass}` });
+      item.createEl("span", { text: String(i + 1), cls: "lark-wiki-sync-step-bullet" });
+      item.createEl("span", { text: label, cls: "lark-wiki-sync-step-label" });
+    }
   }
 
   // ---- Steps ---------------------------------------------------------------
@@ -113,21 +126,36 @@ export class SetupWizardModal extends Modal {
 
     new Setting(this.contentEl)
       .setName("Verify connection")
+      .setDesc("Runs `lark-cli contact +get-user` to confirm auth + scopes.")
       .addButton((btn) =>
-        btn.setButtonText("Run lark-cli contact +me").onClick(async () => {
+        btn.setButtonText("Verify").onClick(async () => {
+          this.authStatus = { kind: "ok", message: "Checking…" };
+          this.render();
           try {
             await this.persistConnectionFields();
             const me = await this.plugin.lark.whoAmI();
-            if (me) {
-              new Notice(`Connected as ${me.name ?? me.user_id ?? "unknown"}`);
-            } else {
-              new Notice("Connected, but no identity returned.");
-            }
+            this.authStatus = me
+              ? {
+                  kind: "ok",
+                  message: `✓ Connected as ${me.name ?? me.user_id ?? "unknown"}`,
+                }
+              : { kind: "err", message: "Connected, but no identity returned." };
           } catch (err) {
-            new Notice(`Failed: ${(err as Error).message}`, 8000);
+            this.authStatus = {
+              kind: "err",
+              message: `✗ ${(err as Error).message}`,
+            };
           }
+          this.render();
         }),
       );
+
+    if (this.authStatus) {
+      this.contentEl.createEl("p", {
+        text: this.authStatus.message,
+        cls: this.authStatus.kind === "ok" ? "lark-wiki-sync-status-ok" : "mod-warning",
+      });
+    }
 
     this.addNavButtons({
       back: () => (this.step = "intro"),

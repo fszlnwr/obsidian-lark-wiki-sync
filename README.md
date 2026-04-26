@@ -12,7 +12,10 @@ Sync one or more Lark Wiki spaces into your Obsidian vault. Uses [`lark-cli`](ht
 - **Native Obsidian markdown.** Lark-flavoured tags (`<lark-table>`, `<text>`, etc.) get converted to GFM pipe tables and clean markdown.
 - **Inline images.** `<image token="…"/>` references download via `lark-cli docs +media-download` into `_attachments/<token>.<ext>` and embed as `![[<token>.<ext>]]`. Cached across syncs.
 - **3-way diff classification.** Per-file `lastSyncedHash` enables proper conflict detection (skip / pull / push / conflict / reconcile). Sync state is keyed by Lark `nodeToken`, so it survives any future path-mapping changes.
-- **Push confirmation.** When the engine plans to upload local edits to Lark, a modal lists every file going up so you can cancel before anything is overwritten remotely. Toggle in settings.
+- **Pre-sync plan modal.** Every sync pauses with a plan view grouped by space — pulls / pushes / conflicts / reconciles, with collapsible per-file lists. Three buttons: **Cancel**, **Pull only** (skip pushes), **Apply all**. Toggle in settings.
+- **Per-space status in settings.** Each configured space row shows file count, per-space last-sync time (relative), and a **Sync just this** button to sync that space alone.
+- **Live progress notice.** While syncing, the Notice updates in real time: `Lark Wiki Sync — Nexus Wiki: ↓ pulling 12/48 · FRD.md`.
+- **Visual wizard stepper.** Setup wizard now shows a numbered stepper across the top instead of a plain "Step 2 of 6" line. The auth-verify result lands inline under the button (no more modal-then-Notice juggling).
 - **Per-file error visibility.** If any pull/push/conflict step fails (missing scope, rate limit, malformed content), a results modal pops up after sync listing every failure with the actual `lark-cli` error message, so you don't have to spelunk through the dev console.
 - **Lossless push round-trip.** Pipe tables you edit locally are rewritten as `<lark-table>` and pulled image embeds (`![[<token>.<ext>]]`) become `<image token="..."/>` before they hit Lark's update API, so structure survives the round trip. Image embeds whose target is *not* a known Lark token are left alone (newly-pasted local images aren't yet uploaded — that's a future item).
 - **One-click sync.** Ribbon icon (Lucide `sync`) and command palette entries.
@@ -116,6 +119,7 @@ Special branches when there is no prior `lastSyncedHash` (first sync of a node, 
 - [x] v0.0.12 — per-action error surfacing (results modal lists every failure with the real lark-cli message)
 - [x] v0.0.13 — push uses `--mode overwrite` (lark-cli's `replace_all` mode is selection-scoped despite the name)
 - [x] v0.1.0 — inverse Obsidian→Lark transform: pipe tables → `<lark-table>`, `![[<token>.<ext>]]` → `<image token="..."/>` on push
+- [x] v0.0.15 — UI polish: pre-sync plan modal, per-space status + per-space sync button, live progress notice, wizard stepper
 - [ ] v0.2.0 — three-way diff conflict modal
 - [ ] v0.3.0 — wikilink ↔ Lark internal link conversion
 - [ ] v0.4.0 — embedded `<sheet>` rendering / link

@@ -68,13 +68,34 @@ export interface SyncPlan {
   skipped: number;
 }
 
+export type PlanDecision = "applyAll" | "pullsOnly" | "cancel";
+
+export interface ProgressEvent {
+  phase: "list" | "classify" | "pull" | "push" | "conflict";
+  spaceName: string;
+  /** Items processed in the current phase. */
+  current?: number;
+  /** Total items expected in the current phase, if known. */
+  total?: number;
+  /** Optional file path or label for the item being processed. */
+  label?: string;
+}
+
 export interface RunOptions {
   dryRun?: boolean;
   /**
-   * If returned promise resolves false, queued pushes are skipped (the rest of
-   * the plan still applies). If undefined, no confirmation is asked.
+   * Called once after `plan()` returns so the UI can show a preview of what
+   * will be done. The callback returns one of three actions:
+   *   - "applyAll":   apply every pull, push, conflict, and reconcile.
+   *   - "pullsOnly":  apply pulls + reconciles + conflicts; skip pushes.
+   *   - "cancel":     do nothing.
+   * If undefined, behaviour is "applyAll".
    */
-  confirmPushes?: (pushes: PendingPush[]) => Promise<boolean>;
+  confirmPlan?: (plan: SyncPlan) => Promise<PlanDecision>;
+  /** Called as the engine progresses through phases. Best-effort, not exact. */
+  onProgress?: (e: ProgressEvent) => void;
+  /** Limit sync to a single space (matched by spaceId). */
+  onlySpaceId?: string;
 }
 
 export class SyncEngine {
@@ -90,11 +111,16 @@ export class SyncEngine {
   // ---------------------------------------------------------------------------
 
   async run(opts: RunOptions = {}): Promise<SyncResult> {
-    const plan = await this.plan();
+    const plan = await this.plan(opts);
 
-    if (opts.confirmPushes && plan.pushes.length > 0) {
-      const ok = await opts.confirmPushes(plan.pushes);
-      if (!ok) plan.pushes = [];
+    if (opts.confirmPlan) {
+      const decision = await opts.confirmPlan(plan);
+      if (decision === "cancel") {
+        return emptyResult();
+      }
+      if (decision === "pullsOnly") {
+        plan.pushes = [];
+      }
     }
 
     if (opts.dryRun) {
@@ -108,7 +134,7 @@ export class SyncEngine {
       };
     }
 
-    return this.apply(plan);
+    return this.apply(plan, opts);
   }
 
   /**
@@ -116,7 +142,7 @@ export class SyncEngine {
    * without writing anything anywhere. Network reads (list + fetch +
    * download attachments) DO happen here — only mutations are deferred.
    */
-  async plan(): Promise<SyncPlan> {
+  async plan(opts: RunOptions = {}): Promise<SyncPlan> {
     const plan: SyncPlan = {
       pulls: [],
       pushes: [],
@@ -125,14 +151,17 @@ export class SyncEngine {
       skipped: 0,
     };
 
-    const spaces = this.settings.spaces ?? [];
+    let spaces = this.settings.spaces ?? [];
+    if (opts.onlySpaceId) {
+      spaces = spaces.filter((s) => s.spaceId === opts.onlySpaceId);
+    }
     if (spaces.length === 0) {
       throw new Error("No wiki spaces configured. Open settings to add one.");
     }
 
     for (const space of spaces) {
       try {
-        await this.planOneSpace(space, plan);
+        await this.planOneSpace(space, plan, opts);
       } catch (err) {
         console.error(
           `LarkWikiSync: planning failed for "${space.spaceName || space.spaceId}":`,
@@ -145,7 +174,8 @@ export class SyncEngine {
   }
 
   /** Execute a (possibly user-edited) plan. */
-  async apply(plan: SyncPlan): Promise<SyncResult> {
+  async apply(plan: SyncPlan, opts: RunOptions = {}): Promise<SyncResult> {
+    const emit = (e: ProgressEvent) => opts.onProgress?.(e);
     const result: SyncResult = {
       pulled: 0,
       pushed: 0,
@@ -160,7 +190,15 @@ export class SyncEngine {
       result.reconciled++;
     }
 
-    for (const p of plan.pulls) {
+    for (let i = 0; i < plan.pulls.length; i++) {
+      const p = plan.pulls[i];
+      emit({
+        phase: "pull",
+        spaceName: p.space.spaceName || p.space.spaceId,
+        current: i + 1,
+        total: plan.pulls.length,
+        label: p.node.title,
+      });
       try {
         await this.writeLocal(p.localPath, p.remoteMd);
         this.recordSync(p.localPath, p.node.node_token, p.node.obj_token, p.remoteHash);
@@ -172,7 +210,15 @@ export class SyncEngine {
       }
     }
 
-    for (const p of plan.pushes) {
+    for (let i = 0; i < plan.pushes.length; i++) {
+      const p = plan.pushes[i];
+      emit({
+        phase: "push",
+        spaceName: p.space.spaceName || p.space.spaceId,
+        current: i + 1,
+        total: plan.pushes.length,
+        label: p.node.title,
+      });
       try {
         await this.lark.updateDoc(p.node.obj_token, p.pushMd, "overwrite");
         // Hash the obsidian-form, not the lark-form — that's what the next
@@ -186,7 +232,15 @@ export class SyncEngine {
       }
     }
 
-    for (const c of plan.conflicts) {
+    for (let i = 0; i < plan.conflicts.length; i++) {
+      const c = plan.conflicts[i];
+      emit({
+        phase: "conflict",
+        spaceName: c.space.spaceName || c.space.spaceId,
+        current: i + 1,
+        total: plan.conflicts.length,
+        label: c.node.title,
+      });
       try {
         await this.handleConflict(c);
         result.conflicts++;
@@ -197,7 +251,19 @@ export class SyncEngine {
       }
     }
 
-    this.settings.lastSyncedAt = new Date().toISOString();
+    const now = new Date().toISOString();
+    this.settings.lastSyncedAt = now;
+
+    // Stamp per-space lastSyncedAt for any space that had any executed action.
+    const touched = new Set<string>();
+    for (const p of plan.pulls) touched.add(p.space.spaceId);
+    for (const p of plan.pushes) touched.add(p.space.spaceId);
+    for (const c of plan.conflicts) touched.add(c.space.spaceId);
+    for (const r of plan.reconciles) touched.add(r.space.spaceId);
+    for (const space of this.settings.spaces) {
+      if (touched.has(space.spaceId)) space.lastSyncedAt = now;
+    }
+
     await this.state.save();
 
     return result;
@@ -207,7 +273,15 @@ export class SyncEngine {
   // Planning
   // ---------------------------------------------------------------------------
 
-  private async planOneSpace(space: WikiSpaceConfig, plan: SyncPlan): Promise<void> {
+  private async planOneSpace(
+    space: WikiSpaceConfig,
+    plan: SyncPlan,
+    opts: RunOptions = {},
+  ): Promise<void> {
+    const emit = (e: ProgressEvent) => opts.onProgress?.(e);
+    const spaceLabel = space.spaceName || space.spaceId;
+
+    emit({ phase: "list", spaceName: spaceLabel });
     const nodes = await this.lark.listAllDescendants(
       space.spaceId,
       space.rootNode || undefined,
@@ -218,8 +292,20 @@ export class SyncEngine {
     const attachmentsAbs = this.resolveAttachmentsAbsolutePath(space);
     const existingAttachments = await this.scanAttachmentsCache(attachmentsRel);
 
+    let classified = 0;
+    const totalDocx = nodes.filter((n) => n.obj_type === "docx").length;
+
     for (const node of nodes) {
       if (node.obj_type !== "docx") continue;
+
+      classified++;
+      emit({
+        phase: "classify",
+        spaceName: spaceLabel,
+        current: classified,
+        total: totalDocx,
+        label: node.title,
+      });
 
       const localPath = this.mapNodeToLocalPath(space, node);
       const existing = this.state.get(node.node_token);
@@ -489,4 +575,8 @@ export class SyncEngine {
       }
     }
   }
+}
+
+function emptyResult(): SyncResult {
+  return { pulled: 0, pushed: 0, conflicts: 0, skipped: 0, reconciled: 0, errors: [] };
 }

@@ -13,6 +13,9 @@ export interface WikiSpaceConfig {
 
   /** Optional node token to scope the sync. Empty = whole space. */
   rootNode: string;
+
+  /** ISO timestamp of last successful sync for this specific space. */
+  lastSyncedAt?: string;
 }
 
 export interface LarkWikiSyncSettings {
@@ -43,9 +46,9 @@ export interface LarkWikiSyncSettings {
   /** Conflict default behavior. */
   conflictPolicy: "ask" | "prefer-local" | "prefer-remote";
 
-  /** When true, sync pauses with a confirmation modal listing local-only
-   * changes before pushing them to Lark. */
-  confirmBeforePush: boolean;
+  /** When true, every sync pauses with a plan modal showing pulls / pushes
+   * / conflicts before any of them is applied. */
+  confirmBeforeSync: boolean;
 
   /** Last successful sync (ISO). */
   lastSyncedAt: string | null;
@@ -61,7 +64,7 @@ export const DEFAULT_SETTINGS: LarkWikiSyncSettings = {
   ignorePatterns: [".obsidian/**", "**/.DS_Store", "**/node_modules/**"],
   autoSyncIntervalMinutes: 0,
   conflictPolicy: "ask",
-  confirmBeforePush: true,
+  confirmBeforeSync: true,
   lastSyncedAt: null,
 };
 
@@ -95,12 +98,23 @@ export class LarkWikiSyncSettingTab extends PluginSettingTab {
     } else {
       for (let i = 0; i < this.plugin.settings.spaces.length; i++) {
         const space = this.plugin.settings.spaces[i];
-        const summary = space.rootNode
-          ? `${space.spaceName || space.spaceId} — root node ${space.rootNode}`
-          : `${space.spaceName || space.spaceId} — whole space`;
+        const folder = `${this.plugin.settings.localRoot}/${space.spaceName || space.spaceId}`;
+        const fileCount = this.plugin.state
+          .all()
+          .filter((s) => s.localPath.startsWith(`${folder}/`)).length;
+        const lastSyncLabel = space.lastSyncedAt
+          ? `last sync ${formatRelative(space.lastSyncedAt)}`
+          : "never synced";
+        const scopeLabel = space.rootNode ? "subtree" : "whole space";
+
         new Setting(containerEl)
-          .setName(summary)
-          .setDesc(`Local: ${this.plugin.settings.localRoot}/${space.spaceName || space.spaceId}/`)
+          .setName(space.spaceName || space.spaceId)
+          .setDesc(`${fileCount} file${fileCount === 1 ? "" : "s"} · ${scopeLabel} · ${lastSyncLabel} · ${folder}/`)
+          .addButton((btn) =>
+            btn.setButtonText("Sync just this").onClick(() => {
+              this.plugin.runSync(false, space.spaceId);
+            }),
+          )
           .addButton((btn) =>
             btn
               .setButtonText("Remove")
@@ -200,11 +214,11 @@ export class LarkWikiSyncSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Confirm before pushing")
-      .setDesc("Pause and list local-only changes before sending them up to Lark.")
+      .setName("Confirm before sync")
+      .setDesc("Pause and show a plan modal listing pulls / pushes / conflicts before any of them is applied.")
       .addToggle((t) =>
-        t.setValue(this.plugin.settings.confirmBeforePush).onChange(async (v) => {
-          this.plugin.settings.confirmBeforePush = v;
+        t.setValue(this.plugin.settings.confirmBeforeSync).onChange(async (v) => {
+          this.plugin.settings.confirmBeforeSync = v;
           await this.plugin.saveSettings();
         }),
       );
@@ -239,4 +253,18 @@ export class LarkWikiSyncSettingTab extends PluginSettingTab {
         }),
       );
   }
+}
+
+function formatRelative(iso: string): string {
+  const then = new Date(iso).getTime();
+  if (!Number.isFinite(then)) return iso;
+  const seconds = Math.max(0, Math.round((Date.now() - then) / 1000));
+  if (seconds < 60) return `${seconds}s ago`;
+  const minutes = Math.round(seconds / 60);
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.round(hours / 24);
+  if (days < 30) return `${days}d ago`;
+  return new Date(iso).toLocaleDateString();
 }

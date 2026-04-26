@@ -1,5 +1,7 @@
+/* ----- Setup wizard ----- */
+
 .lark-wiki-sync-wizard {
-  max-width: 560px;
+  max-width: 600px;
 }
 
 .lark-wiki-sync-wizard h2 {
@@ -11,4 +13,156 @@
   justify-content: flex-end;
   gap: 8px;
   margin-top: 24px;
+}
+
+/* Stepper across the top of the wizard */
+.lark-wiki-sync-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 18px 0;
+  flex-wrap: wrap;
+}
+
+.lark-wiki-sync-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 6px;
+  border-radius: 999px;
+  font-size: 0.82em;
+  background: var(--background-modifier-border);
+  color: var(--text-muted);
+  border: 1px solid transparent;
+}
+
+.lark-wiki-sync-step.is-current {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border-color: var(--interactive-accent);
+}
+
+.lark-wiki-sync-step.is-done {
+  background: transparent;
+  color: var(--text-normal);
+  border-color: var(--background-modifier-border);
+}
+
+.lark-wiki-sync-step-bullet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  font-size: 0.75em;
+  font-weight: 600;
+}
+
+.lark-wiki-sync-step.is-current .lark-wiki-sync-step-bullet {
+  background: var(--text-on-accent);
+  color: var(--interactive-accent);
+}
+
+.lark-wiki-sync-step.is-done .lark-wiki-sync-step-bullet {
+  background: var(--background-modifier-success, var(--interactive-success));
+  color: var(--text-on-accent);
+}
+
+.lark-wiki-sync-status-ok {
+  color: var(--text-success, var(--interactive-success));
+  font-size: 0.9em;
+}
+
+/* ----- Sync plan modal ----- */
+
+.lark-wiki-sync-plan {
+  max-width: 640px;
+}
+
+.lark-wiki-sync-plan h2 {
+  margin-top: 0;
+}
+
+.lark-wiki-sync-plan-summary {
+  font-size: 0.95em;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.lark-wiki-sync-plan-space {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background: var(--background-secondary);
+}
+
+.lark-wiki-sync-plan-space h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.05em;
+}
+
+.lark-wiki-sync-plan-space details {
+  margin-top: 6px;
+}
+
+.lark-wiki-sync-plan-space details summary {
+  cursor: pointer;
+  font-size: 0.88em;
+  color: var(--text-muted);
+}
+
+.lark-wiki-sync-plan-space details ul {
+  margin: 6px 0 0 0;
+  padding-left: 20px;
+  font-size: 0.88em;
+}
+
+.lark-wiki-sync-plan .modal-button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* ----- Sync results modal ----- */
+
+.lark-wiki-sync-results {
+  max-width: 640px;
+}
+
+.lark-wiki-sync-results h2 {
+  margin-top: 0;
+}
+
+.lark-wiki-sync-results h3 {
+  margin-top: 18px;
+  margin-bottom: 6px;
+}
+
+.lark-wiki-sync-results pre {
+  background: var(--background-secondary);
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  white-space: pre-wrap;
+}
+
+.lark-wiki-sync-results ul {
+  margin: 6px 0 12px 0;
+  padding-left: 20px;
+}
+
+.lark-wiki-sync-results li {
+  margin-bottom: 8px;
+  font-size: 0.88em;
+}
+
+.lark-wiki-sync-results li code {
+  background: var(--background-secondary);
+  padding: 1px 4px;
+  border-radius: 3px;
 }
