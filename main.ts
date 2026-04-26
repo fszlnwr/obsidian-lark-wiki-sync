@@ -15,6 +15,7 @@ export default class LarkWikiSyncPlugin extends Plugin {
   lark!: LarkCli;
   state!: StateStore;
   syncEngine!: SyncEngine;
+  private autoSyncTimer: number | null = null;
 
   async onload() {
     await this.loadSettings();
@@ -23,6 +24,8 @@ export default class LarkWikiSyncPlugin extends Plugin {
     this.state = new StateStore(this.app, this.manifest.id);
     await this.state.load();
     this.syncEngine = new SyncEngine(this.app, this.settings, this.lark, this.state);
+
+    this.setupAutoSync();
 
     this.addRibbonIcon(RIBBON_ICON_ID, "Lark Wiki Sync", async () => {
       if (!this.settings.configured) {
@@ -66,7 +69,31 @@ export default class LarkWikiSyncPlugin extends Plugin {
     this.addSettingTab(new LarkWikiSyncSettingTab(this.app, this));
   }
 
-  onunload() {}
+  onunload() {
+    this.clearAutoSync();
+  }
+
+  /**
+   * Re-arms (or cancels) the auto-sync interval based on the current setting.
+   * Safe to call repeatedly — always clears the old timer first.
+   */
+  setupAutoSync(): void {
+    this.clearAutoSync();
+    const minutes = this.settings.autoSyncIntervalMinutes;
+    if (!Number.isFinite(minutes) || minutes <= 0) return;
+    const ms = minutes * 60_000;
+    this.autoSyncTimer = window.setInterval(() => {
+      if (!this.settings.configured) return;
+      this.runSync().catch((err) => console.error("LarkWikiSync auto-sync failed:", err));
+    }, ms);
+  }
+
+  private clearAutoSync(): void {
+    if (this.autoSyncTimer !== null) {
+      window.clearInterval(this.autoSyncTimer);
+      this.autoSyncTimer = null;
+    }
+  }
 
   async runSync(dryRun = false, onlySpaceId?: string) {
     const progressNotice = new Notice(
@@ -152,6 +179,7 @@ export default class LarkWikiSyncPlugin extends Plugin {
   async saveSettings() {
     await this.saveData(this.settings);
     this.lark.updateSettings(this.settings);
+    this.setupAutoSync();
   }
 }
 

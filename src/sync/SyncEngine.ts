@@ -5,6 +5,7 @@ import type { StateStore, FileSyncState } from "../state/StateStore";
 import { hashString } from "../util/hash";
 import { extractImageTokens, larkToObsidianMarkdown } from "../util/larkToObsidianMd";
 import { obsidianToLarkMarkdown } from "../util/obsidianToLarkMd";
+import { hasLarkSyncFalse, matchAnyGlob } from "../util/skipRules";
 
 const ATTACHMENTS_SUBFOLDER = "_attachments";
 
@@ -322,6 +323,12 @@ export class SyncEngine {
       });
 
       const localPath = this.mapNodeToLocalPath(space, node);
+
+      if (matchAnyGlob(localPath, this.settings.ignorePatterns ?? [])) {
+        plan.skipped++;
+        continue;
+      }
+
       const existing = this.state.get(node.node_token);
 
       try {
@@ -339,6 +346,14 @@ export class SyncEngine {
         const localMd =
           localFile instanceof TFile ? await this.app.vault.read(localFile) : null;
         const localHash = localMd ? hashString(localMd) : null;
+
+        // Per-file opt-out via `lark_sync: false` frontmatter. Honoured even
+        // for files that are tracked in state — flipping the flag pauses sync
+        // for that file without removing it from either side.
+        if (localMd && hasLarkSyncFalse(localMd)) {
+          plan.skipped++;
+          continue;
+        }
 
         // No prior state — this is a first-sync discovery for this node.
         if (!existing) {

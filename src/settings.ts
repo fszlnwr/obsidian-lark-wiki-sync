@@ -225,7 +225,7 @@ export class LarkWikiSyncSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Auto-sync interval")
-      .setDesc("Minutes between automatic syncs. Set to 0 for manual only.")
+      .setDesc("Minutes between automatic background syncs. Set to 0 for manual only. Auto-sync uses the same plan modal if Confirm is on.")
       .addText((t) =>
         t
           .setValue(String(this.plugin.settings.autoSyncIntervalMinutes))
@@ -236,6 +236,27 @@ export class LarkWikiSyncSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           }),
       );
+
+    new Setting(containerEl)
+      .setName("Ignore patterns")
+      .setDesc("One glob per line. Files whose vault-relative path matches any pattern are skipped on every sync. `*` = anything except `/`, `**` = anything (incl. `/`). Examples: `📥 Lark/**/Drafts/**`, `**/*.tmp.md`.")
+      .addTextArea((t) => {
+        t.setPlaceholder("📥 Lark/**/Drafts/**\n**/*.tmp.md")
+          .setValue(this.plugin.settings.ignorePatterns.join("\n"))
+          .onChange(async (v) => {
+            this.plugin.settings.ignorePatterns = v
+              .split("\n")
+              .map((line) => line.trim())
+              .filter((line) => line.length > 0 && !line.startsWith("#"));
+            await this.plugin.saveSettings();
+          });
+        t.inputEl.rows = 4;
+        t.inputEl.style.width = "100%";
+      });
+
+    new Setting(containerEl)
+      .setName("Per-file opt-out")
+      .setDesc("Add `lark_sync: false` to a file's frontmatter to skip just that file on every sync, without removing it from either side. Useful for drafts you don't want pushed yet.");
 
     new Setting(containerEl).setName("Maintenance").setHeading();
 
