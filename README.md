@@ -73,8 +73,9 @@ When the plugin hits a missing scope, the post-sync results modal will tell you 
 ## Install (dev)
 
 ```bash
+git clone https://github.com/fszlnwr/obsidian-lark-wiki-sync.git
 cd /path/to/your/vault/.obsidian/plugins
-ln -s /Users/daphnedevanita/work-stuff/obsidian-lark-wiki-sync ./lark-wiki-sync
+ln -s /absolute/path/to/obsidian-lark-wiki-sync ./lark-wiki-sync
 cd lark-wiki-sync
 npm install
 npm run dev        # watches main.ts → main.js

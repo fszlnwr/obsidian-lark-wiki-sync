@@ -23,7 +23,7 @@ There is no test runner wired up yet (the README's testing strategy is aspiratio
 
 ```bash
 cd /path/to/vault/.obsidian/plugins
-ln -s /Users/daphnedevanita/work-stuff/obsidian-lark-wiki-sync ./lark-wiki-sync
+ln -s /absolute/path/to/obsidian-lark-wiki-sync ./lark-wiki-sync
 # in Obsidian: Settings → Community plugins → reload → enable "Lark Wiki Sync"
 ```
 
