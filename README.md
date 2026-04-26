@@ -22,12 +22,41 @@ Sync one or more Lark Wiki spaces into your Obsidian vault. Uses [`lark-cli`](ht
 
 ## Prerequisites
 
-1. **`lark-cli` installed and authorized.**
-   ```bash
-   lark-cli auth login --scope "wiki:space:retrieve wiki:node:retrieve docx:document:readonly docx:document drive:drive:readonly"
-   ```
-   (Drop `docx:document` and `drive:drive:readonly` if you only need pull-only / no images.)
-2. Obsidian desktop. The plugin is `isDesktopOnly: true` because it shells out to `lark-cli` via `child_process.spawn`.
+### 1. `lark-cli`
+
+This plugin is a thin Obsidian-side wrapper. **All Lark/Feishu API calls are made by [`lark-cli`](https://github.com/larksuite/cli)**, an open-source CLI maintained by the Larksuite team. The plugin shells out to it for every list, fetch, update, and media download — so auth, scopes, rate limiting, and API coverage live upstream.
+
+**Install** (requires Node 18+):
+
+```bash
+npm install -g @larksuite/cli
+# verify it's on your PATH
+lark-cli --version
+```
+
+**Initial setup** (one-time per machine):
+
+```bash
+lark-cli config init    # set your tenant + app credentials, follow the prompts
+```
+
+See the [larksuite/cli README](https://github.com/larksuite/cli) for full options (Feishu vs. Lark, app vs. tenant credentials, MCP integration).
+
+**Authorize the right scopes** for what you want this plugin to do:
+
+```bash
+# pull-only (read tree, fetch doc bodies, download images)
+lark-cli auth login --scope "wiki:space:retrieve wiki:node:retrieve docx:document:readonly drive:drive:readonly"
+
+# bidirectional (above + write back to Lark on push)
+lark-cli auth login --scope "wiki:space:retrieve wiki:node:retrieve docx:document:readonly docx:document drive:drive:readonly"
+```
+
+When the plugin hits a missing scope, the post-sync results modal will tell you exactly which scope to add and give you the command to copy-paste.
+
+### 2. Obsidian desktop
+
+`isDesktopOnly: true` — the plugin uses Node's `child_process.spawn` to run `lark-cli`. iOS / Android Obsidian don't expose that, so they're not supported.
 
 ## Install via BRAT
 
