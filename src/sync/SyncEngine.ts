@@ -292,6 +292,20 @@ export class SyncEngine {
     const attachmentsAbs = this.resolveAttachmentsAbsolutePath(space);
     const existingAttachments = await this.scanAttachmentsCache(attachmentsRel);
 
+    // node_token → doc title, used to rewrite intra-wiki links into Obsidian
+    // wikilinks during the Lark→Obsidian transform. Seed from state (already
+    // synced docs from any space) and overlay the current walk so freshly-
+    // discovered links resolve too.
+    const nodeTitleMap: Record<string, string> = {};
+    for (const entry of this.state.all()) {
+      const filename = entry.localPath.split("/").pop() ?? "";
+      const title = filename.replace(/\.md$/, "");
+      if (title) nodeTitleMap[entry.nodeToken] = title;
+    }
+    for (const n of nodes) {
+      if (n.obj_type === "docx" && n.title) nodeTitleMap[n.node_token] = n.title;
+    }
+
     let classified = 0;
     const totalDocx = nodes.filter((n) => n.obj_type === "docx").length;
 
@@ -318,7 +332,7 @@ export class SyncEngine {
           attachmentsAbs,
           existingAttachments,
         );
-        const remoteMd = larkToObsidianMarkdown(rawMd, { imageMap });
+        const remoteMd = larkToObsidianMarkdown(rawMd, { imageMap, nodeTitleMap });
         const remoteHash = hashString(remoteMd);
 
         const localFile = this.app.vault.getAbstractFileByPath(localPath);

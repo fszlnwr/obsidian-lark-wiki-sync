@@ -17,6 +17,13 @@
 export interface ConvertOptions {
   /** Map from Lark image token → filename to embed via ![[...]]. */
   imageMap?: Record<string, string>;
+  /**
+   * Map from Lark `node_token` → resolved doc title. When a Lark wiki URL in
+   * the source markdown points at a known node, the link is rewritten as an
+   * Obsidian wikilink (`[[title]]` or `[[title|alias]]`) so the synced doc
+   * navigates to the corresponding local file.
+   */
+  nodeTitleMap?: Record<string, string>;
 }
 
 export function larkToObsidianMarkdown(src: string, opts: ConvertOptions = {}): string {
@@ -38,6 +45,8 @@ export function larkToObsidianMarkdown(src: string, opts: ConvertOptions = {}): 
     },
   );
 
+  out = convertLarkWikiLinks(out, opts.nodeTitleMap);
+
   out = out.replace(
     /<sheet\s+([^/]*?)\/>/g,
     (_match, attrs: string) => {
@@ -52,6 +61,35 @@ export function larkToObsidianMarkdown(src: string, opts: ConvertOptions = {}): 
   out = out.replace(/<text[^>]*>([\s\S]*?)<\/text>/g, "$1");
 
   return out;
+}
+
+/**
+ * Rewrite Lark wiki links to Obsidian wikilinks when the destination doc is
+ * already known to the sync state.
+ *
+ * Matches `[label](https://<host>/wiki/<node_token>...)` where `<host>` is a
+ * Lark/Feishu domain. If `nodeTitleMap` has the token, emit
+ * `[[title]]` (when label === title) or `[[title|label]]` (preserving the
+ * user's link text). If not, leave the link untouched — the doc may simply
+ * not be synced yet.
+ */
+function convertLarkWikiLinks(
+  src: string,
+  nodeTitleMap: Record<string, string> | undefined,
+): string {
+  if (!nodeTitleMap) return src;
+  // Allow any number of subdomain levels so e.g. `fcn.sg.larksuite.com` matches.
+  const LARK_HOSTS = /(?:[a-z0-9-]+\.)*(?:feishu\.cn|feishu\.com|larksuite\.com|larkoffice\.com)/i;
+  const LINK_RE = new RegExp(
+    `\\[([^\\]]+)\\]\\(https?://${LARK_HOSTS.source}/wiki/([A-Za-z0-9]+)(?:[/?#][^)]*)?\\)`,
+    "gi",
+  );
+  return src.replace(LINK_RE, (match, label: string, token: string) => {
+    const title = nodeTitleMap[token];
+    if (!title) return match;
+    if (label.trim() === title) return `[[${title}]]`;
+    return `[[${title}|${label}]]`;
+  });
 }
 
 export function extractImageTokens(src: string): string[] {
