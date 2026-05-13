@@ -158,6 +158,7 @@ Special branches when there is no prior `lastSyncedHash` (first sync of a node, 
 - [x] v0.0.16 — wikilink conversion on pull: Lark wiki URLs inside docs become `[[Target]]` when the destination is synced
 - [x] v0.0.17 — auto-sync timer + `lark_sync: false` frontmatter flag + glob ignore patterns
 - [x] v0.0.18 — conflict resolution modal: per-file Keep local / Keep remote / Save sidecar
+- [x] v0.0.19 — community-plugin lint fixes: MIT LICENSE file added, description rewritten to drop the word "Obsidian"
 - [ ] v0.3.0 — wikilink reverse direction (Obsidian `[[…]]` → Lark URL on push), needs tenant host capture
 - [ ] v0.4.0 — embedded `<sheet>` rendering / link
 - [ ] v1.0.0 — ignore patterns, per-file `lark_sync: false` frontmatter flag, auto-sync timer, polish
