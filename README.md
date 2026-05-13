@@ -159,6 +159,7 @@ Special branches when there is no prior `lastSyncedHash` (first sync of a node, 
 - [x] v0.0.17 — auto-sync timer + `lark_sync: false` frontmatter flag + glob ignore patterns
 - [x] v0.0.18 — conflict resolution modal: per-file Keep local / Keep remote / Save sidecar
 - [x] v0.0.19 — community-plugin lint fixes: MIT LICENSE file added, description rewritten to drop the word "Obsidian"
+- [x] v0.0.20 — community-plugin lint fixes round 2: drop top-level `<h2>` in favour of section `.setHeading()`; move inline `style.width` to a CSS class
 - [ ] v0.3.0 — wikilink reverse direction (Obsidian `[[…]]` → Lark URL on push), needs tenant host capture
 - [ ] v0.4.0 — embedded `<sheet>` rendering / link
 - [ ] v1.0.0 — ignore patterns, per-file `lark_sync: false` frontmatter flag, auto-sync timer, polish

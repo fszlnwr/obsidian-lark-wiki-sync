@@ -1,3 +1,9 @@
+/* ----- Settings tab ----- */
+
+.lark-wiki-sync-ignore-textarea {
+  width: 100%;
+}
+
 /* ----- Setup wizard ----- */
 
 .lark-wiki-sync-wizard {

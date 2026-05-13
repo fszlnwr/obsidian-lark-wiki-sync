@@ -80,8 +80,9 @@ export class LarkWikiSyncSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    containerEl.createEl("h2", { text: "Lark Wiki Sync" });
-
+    // Obsidian's settings UI already shows the plugin name in the tab title,
+    // so we drop the top-level <h2> per the community-plugin lint rule and
+    // let the per-section .setHeading() calls below provide structure.
     containerEl.createEl("p", {
       text:
         "Two-way sync between this vault and one or more Lark Wiki spaces. " +
@@ -251,7 +252,7 @@ export class LarkWikiSyncSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           });
         t.inputEl.rows = 4;
-        t.inputEl.style.width = "100%";
+        t.inputEl.addClass("lark-wiki-sync-ignore-textarea");
       });
 
     new Setting(containerEl)
